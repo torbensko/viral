@@ -11,9 +11,7 @@ void setup() {
 
 // Sccatter the nodes around randomly, without placing any two too near to each other
 void performLayout() {
-  while(_tryPlacement()) { 
-    println(entities.size()); 
-  };
+  while(_tryPlacement()) {};
 }
 
 boolean _tryPlacement() {
@@ -40,10 +38,12 @@ boolean _tryPlacement() {
 
 void draw() {
   background(255);
-  for(Entity e : entities)  e.think();
-  for(Entity e : entities)  e.preDraw();
-  for(Entity e : entities)  e.draw();
-  for(Entity e : entities)  e.postDraw();
+  // we take a clone to avoid concurrency issues
+  ArrayList<Entity> clone = (ArrayList<Entity>) entities.clone();
+  for(Entity e : clone)  e.think();
+  for(Entity e : clone)  e.preDraw();
+  for(Entity e : clone)  e.draw();
+  for(Entity e : clone)  e.postDraw();
 }
 
 void mouseClicked() {

@@ -3,6 +3,9 @@ import java.util.ArrayList;
 final int ITEM_LINK_LINE_WEIGHT = 1;
 final float ITEM_LINK_LINE_WHITENESS = 0.7;
 
+final float TRANSFER_TIME_DEFAULT = 1000;
+
+
 static ArrayList<Item> items = new ArrayList<Item>();
 
 class Item extends Entity {
@@ -13,12 +16,10 @@ class Item extends Entity {
   final int NOT_MOVING = -1;
   
   float startTime = NOT_MOVING;
-  int xDest;
-  int yDest;
   int xInit;
   int yInit;
   float duration;
-  Entity notify;
+  Entity receiver, sender;
   
   // Create an Item with an initial position and reference to the master copy
   // of this item, used for matching duplicated items
@@ -30,6 +31,7 @@ class Item extends Entity {
     items.add(this);
     privatelyActive = true;
     links = new ArrayList<Site>();
+    duration = TRANSFER_TIME_DEFAULT;
   }
   
   Item clone() {
@@ -38,34 +40,36 @@ class Item extends Entity {
     return i;
   }
   
-  // Tell it to move somewhere over a certain period and notify the receiver
+  // Tell it to move somewhere over a certain period and receiver the receiver
   // when there
-  // @arg notify    The entity to notify when complete. This can be null
-  void move(int x, int y, float duration, Entity notify) {
-    xDest = x;
-    yDest = y;
+  void sendTo(Entity receiver, Entity sender, float duration) {
     xInit = this.x;
     yInit = this.y;
-    this.duration = duration;
-    this.notify = notify;
+    this.sender = sender;
+    if(duration > 0)
+      this.duration = duration;
+    this.receiver = receiver;
     startTime = millis();
+  }
+  
+  void sendTo(Entity receiver) {
+    sendTo(receiver, null, 0);
   }
   
   void think() {
     if(startTime != NOT_MOVING) {
       float progress = clamp((millis() - startTime) / duration);
       if(progress == 1) {
-        x = xDest;
-        y = yDest;
+        x = receiver.x;
+        y = receiver.y;
         startTime = NOT_MOVING;
-        if(notify != null)
-          notify.transferComplete(this);
-        println("complete");
+        receiver.transferComplete(this);
+        if(sender != null)
+          sender.transferComplete(this);
       } else {
         progress = ease(progress);
-        x = (int) fade(xInit, xDest, progress);
-        y = (int) fade(yInit, yDest, progress);
-        println(progress);
+        x = (int) fade(xInit, receiver.x, progress);
+        y = (int) fade(yInit, receiver.y, progress);
       }
     }
   }

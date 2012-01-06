@@ -70,6 +70,12 @@ class User extends Entity {
   
 class Researcher extends User {
   
+  final int SETUP_WAITING = 0;
+  final int SETUP_SYSTEM = 1;
+  final int SETUP_VIDEO = 2;
+  
+  int setupPhase = SETUP_WAITING;
+  
   Researcher(int x, int y, float scale) {
     super(x, y, scale);
     researcher = this;
@@ -80,15 +86,42 @@ class Researcher extends User {
   
   boolean containsClick() {
     boolean contains = super.containsClick();
-    if(contains && youtube != null && project != null) {
-      Item i = new Item(x, y, 1, null);
-      i.links.add(youtube);
-      i.links.add(project);
-      
-      transferComplete(i);
-      i.clone().move(youtube.x, youtube.y, TRANSFER_TIME_INIT_YOUTUBE_UPLOAD, youtube);
+    if(contains) {
+      switch(setupPhase) {
+        case SETUP_WAITING : publishSystem(); break;
+        case SETUP_SYSTEM :  publishVideo(); break;
+        case SETUP_VIDEO :   break;
+      }
     }
     return contains;
+  }
+  
+  void itemReceived() {
+  }
+  
+  // Put out the study system
+  void publishSystem() {
+    if(project != null && server != null) {
+      
+      browsing = project;
+      Item study = new Item(x, y, scale, null);
+      study.links.add(server);
+      study.sendTo(project, this, -1);
+      
+      setupPhase++;
+    }
+  }
+  
+  // Put a copy of the video to YouTube
+  void publishVideo() {
+    if(youtube != null && project != null) {
+      browsing = youtube;
+      Item i = new Item(x, y, scale, null);
+      i.links.add(project);
+      i.sendTo(youtube);
+      
+      setupPhase++;
+    }
   }
   
 }

@@ -51,6 +51,17 @@ class YouTube extends Site {
     followable = true;
   }
   
+  void transferComplete(Item i) {
+    super.transferComplete(i);
+    
+    // send back the youtube version (i.e. the one with links)
+    Item ytv = new Item(x, y, 1, null);
+    ytv.links.add(youtube);
+    ytv.links.add(project);
+    
+    ytv.sendTo(researcher);
+  }
+  
 }
 
 class ProjectSite extends Site {

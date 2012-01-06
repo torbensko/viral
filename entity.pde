@@ -33,6 +33,8 @@ class Entity {
     isActive = true;
   }
   
+  void itemReceived(Item i) {}
+  
   void remove() {
     entities.remove(this);
   }
