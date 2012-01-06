@@ -10,9 +10,6 @@ final int BROSWE_LINE_WEIGHT = 1;
 
 final int FOLLOWING_CHANCE = 5;
 
-final int OCCASSIONAL_THINK_PERIOD_MIN = 1000;
-final int OCCASSIONAL_THINK_PERIOD_MAX = 4000;
-
 final float TRANSFER_TIME_INIT_YOUTUBE_UPLOAD = 2000;
 
 class User extends Entity {
@@ -43,20 +40,6 @@ class User extends Entity {
     super.remove();
     users.remove(this);
   }
-  
-  private float thinkTime;
-  private float thinkDiff;
-  
-  void think() {
-    thinkDiff -= millis() - thinkTime;
-    thinkTime  = millis();
-    if(thinkDiff < 0) {
-      thinkDiff = random(OCCASSIONAL_THINK_PERIOD_MIN, OCCASSIONAL_THINK_PERIOD_MAX);
-      occassionalThink();
-    }
-  }
-  
-  void occassionalThink() {}
   
   // Pick a random nearby site to visit
   // @return   Returns TRUE if it is a different site from before
@@ -98,7 +81,7 @@ class Researcher extends User {
       switch(state) {
         case STATE_INIT :           publishSystem(); break;
         case STATE_CREATING_VIDEO : publishVideo(); break;
-        case STATE_PROMOTING:       publishVideo(); break; // promoteVideo()
+        case STATE_PROMOTING:       promoteVideo(); break;
       }
     }
     return contains;

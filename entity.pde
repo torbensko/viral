@@ -3,6 +3,9 @@ import java.util.ArrayList;
 final int ACTIVE_INNER = 100;
 final int ACTIVE_RANGE = 200;
 
+final int OCCASSIONAL_THINK_PERIOD_MIN = 1000;
+final int OCCASSIONAL_THINK_PERIOD_MAX = 4000;
+
 final int ACTIVE_PERIOD_CHECK = 1000; // in millis
 
 final float REARRANGE_DURATION = 200; // in millis
@@ -62,7 +65,19 @@ class Entity {
         (mouseY > y-size/2 && mouseY < y+size/2);
   }
   
-  void think() {}
+  private float thinkTime;
+  private float thinkDiff;
+  
+  void think() {
+    thinkDiff -= millis() - thinkTime;
+    thinkTime  = millis();
+    if(thinkDiff < 0) {
+      thinkDiff = random(OCCASSIONAL_THINK_PERIOD_MIN, OCCASSIONAL_THINK_PERIOD_MAX);
+      occassionalThink();
+    }
+  }
+  
+  void occassionalThink() {}
   
   private float strengthDiff = 0;
   private float strengthTime = 0; // offset them from each other

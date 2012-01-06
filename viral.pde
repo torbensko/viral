@@ -7,6 +7,7 @@ void setup() {
   size(800, 800);
   smooth();
   performLayout();
+  background(255);
   
   // automatic layouts
   makeResearcher(users.get(0));
@@ -47,7 +48,9 @@ boolean _tryPlacement() {
 
 
 void draw() {
-  background(255);
+  fill(255, 200);
+  rect(0,0,width,height);
+  
   // we take a clone to avoid concurrency issues
   ArrayList<Entity> clone = (ArrayList<Entity>) entities.clone();
   for(Entity e : clone)  e.think();

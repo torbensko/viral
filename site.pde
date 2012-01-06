@@ -6,6 +6,9 @@ final int SERVER_GROW_AMOUNT = 2;
 final int FOLLOWABLE_STROKE_WEIGHT = 3;
 final color FOLLOWABLE_COLOR = #FFAA11;
 
+final int DISCARD_CHANCE_VID = 5;    // 1 in DISCARD_CHANCE_VID
+final int DISCARD_CHANCE_FORUM = 1;
+
 static ArrayList<Site> sites = new ArrayList<Site>();
 static YouTube youtube;
 static ProjectSite project;
@@ -58,6 +61,18 @@ class Site extends Entity {
     }
     ellipse(x, y, size*scale, size*scale);
   }
+  
+  void occassionalThink() {
+    considerDiscarding();
+  }
+  
+  void considerDiscarding() {
+    // drop some of the material after a while
+    for(Item i : (ArrayList<Item>) items.clone()) {
+      if(i instanceof YouTubeVid && floor(random(DISCARD_CHANCE_VID)) % DISCARD_CHANCE_VID == 0)
+        discardItem(i);
+    }
+  }
 }
 
 
@@ -83,6 +98,9 @@ class YouTube extends Site {
     ytv.clone().sendTo(researcher);
   }
   
+  // do not want to discard anything
+  void considerDiscarding() {}
+  
 }
 
 class ProjectSite extends Site {
@@ -100,7 +118,10 @@ class ProjectSite extends Site {
     super.acceptItem(i);
     println(items.size());
   }
-  
+
+  // do not want to discard anything
+  void considerDiscarding() {}
+
 }
 
 class Server extends Site {
@@ -119,5 +140,8 @@ class Server extends Site {
     if(floor(random(SERVER_GROW_CHANCE)) % SERVER_GROW_CHANCE == 0)
       size += SERVER_GROW_AMOUNT;
   }
+  
+  // do not want to discard anything
+  void considerDiscarding() {}
   
 }
