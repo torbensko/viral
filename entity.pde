@@ -28,12 +28,12 @@ class Entity {
     this.scale = scale;
   }
   
-  void transferComplete(Item i) {
+  void acceptItem(Item i) {
     items.add(i);
     isActive = true;
   }
   
-  void itemReceived(Item i) {}
+  void receiverGotItem(Item i) {}
   
   void remove() {
     entities.remove(this);

@@ -18,6 +18,8 @@ class Item extends Entity {
   float startTime = NOT_MOVING;
   int xInit;
   int yInit;
+  int xDest;
+  int yDest;
   float duration;
   Entity receiver, sender;
   
@@ -40,11 +42,21 @@ class Item extends Entity {
     return i;
   }
   
+  void sendTo(Entity receiver) {
+    sendTo(receiver, null, 0);
+  }
+  
+  void sendTo(Entity receiver, Entity sender, float duration) {
+    moveTo(receiver.x, receiver.y, receiver, sender, duration);
+  }
+  
   // Tell it to move somewhere over a certain period and receiver the receiver
   // when there
-  void sendTo(Entity receiver, Entity sender, float duration) {
+  void moveTo(int x, int y, Entity receiver, Entity sender, float duration) {
     xInit = this.x;
     yInit = this.y;
+    xDest = x;
+    yDest = y;
     this.sender = sender;
     if(duration > 0)
       this.duration = duration;
@@ -52,24 +64,21 @@ class Item extends Entity {
     startTime = millis();
   }
   
-  void sendTo(Entity receiver) {
-    sendTo(receiver, null, 0);
-  }
-  
   void think() {
     if(startTime != NOT_MOVING) {
       float progress = clamp((millis() - startTime) / duration);
       if(progress == 1) {
-        x = receiver.x;
-        y = receiver.y;
+        x = xDest;
+        y = yDest;
         startTime = NOT_MOVING;
-        receiver.transferComplete(this);
+        if(receiver != null)
+          receiver.acceptItem(this);
         if(sender != null)
-          sender.transferComplete(this);
+          sender.receiverGotItem(this);
       } else {
         progress = ease(progress);
-        x = (int) fade(xInit, receiver.x, progress);
-        y = (int) fade(yInit, receiver.y, progress);
+        x = (int) fade(xInit, xDest, progress);
+        y = (int) fade(yInit, yDest, progress);
       }
     }
   }

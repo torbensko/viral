@@ -5,6 +5,7 @@ static ArrayList<Surfer> surfers = new ArrayList<Surfer>();
 static Researcher researcher;
 
 final int BROWSE_SIZE = 200;
+final int BROWSE_INCREASE = 10;
 final int BROSWE_LINE_WEIGHT = 1;
 
 final int OCCASSIONAL_THINK_PERIOD_MIN = 1000;
@@ -15,10 +16,12 @@ final float TRANSFER_TIME_INIT_YOUTUBE_UPLOAD = 2000;
 class User extends Entity {
   
   Site browsing;
+  int browseRange;
   
   User(int x, int y, float scale) {
     super(x, y, scale);
     users.add(this);
+    browseRange = BROWSE_SIZE;
   }
   
   void preDraw() {
@@ -59,7 +62,7 @@ class User extends Entity {
     Site previously = browsing;
     ArrayList<Site> possible = new ArrayList<Site>();
     for(Site s : sites) {
-      if(s.browsable && s.distance(this) < BROWSE_SIZE)
+      if(s.browsable && s.distance(this) < browseRange)
         possible.add(s);
     }
     if(possible.size() > 0)
@@ -70,11 +73,14 @@ class User extends Entity {
   
 class Researcher extends User {
   
-  final int SETUP_WAITING = 0;
-  final int SETUP_SYSTEM = 1;
-  final int SETUP_VIDEO = 2;
+  final int STATE_INIT = 0;
+  final int STATE_CREATING_VIDEO = 1;
+  final int STATE_WAITING_FOR_YT = 2;
+  final int STATE_PROMOTING = 3;
   
-  int setupPhase = SETUP_WAITING;
+  int state = STATE_INIT;
+  
+  Item currentVideo;
   
   Researcher(int x, int y, float scale) {
     super(x, y, scale);
@@ -87,28 +93,25 @@ class Researcher extends User {
   boolean containsClick() {
     boolean contains = super.containsClick();
     if(contains) {
-      switch(setupPhase) {
-        case SETUP_WAITING : publishSystem(); break;
-        case SETUP_SYSTEM :  publishVideo(); break;
-        case SETUP_VIDEO :   break;
+      switch(state) {
+        case STATE_INIT :           publishSystem(); break;
+        case STATE_CREATING_VIDEO : publishVideo(); break;
+        case STATE_PROMOTING:       promoteVideo(); break;
       }
     }
     return contains;
   }
   
-  void itemReceived() {
-  }
+  void receiverGotItem(Item i) {}
   
   // Put out the study system
   void publishSystem() {
     if(project != null && server != null) {
-      
       browsing = project;
       Item study = new Item(x, y, scale, null);
       study.links.add(server);
       study.sendTo(project, this, -1);
-      
-      setupPhase++;
+      state = STATE_CREATING_VIDEO;
     }
   }
   
@@ -119,10 +122,34 @@ class Researcher extends User {
       Item i = new Item(x, y, scale, null);
       i.links.add(project);
       i.sendTo(youtube);
-      
-      setupPhase++;
+      state = STATE_WAITING_FOR_YT;
     }
   }
+  
+  void acceptItem(Item i) {
+    super.acceptItem(i);
+    // we only get items from YouTube, so we can assume its the video
+    currentVideo = i;
+    state = STATE_PROMOTING;
+  }
+  
+  // Finds a new site and sends the latest video to it
+  void promoteVideo() {
+    boolean promoted = false;
+    do {
+      // every time, we look a litte further
+      browseRange += BROWSE_INCREASE;
+      boolean newLink = browse();
+      if(!browsing.holdsItem(currentVideo)) {
+        currentVideo.clone().sendTo(browsing);
+        promoted = true;
+      }
+    } while(!promoted);
+  }
+  
+  void occassionalThink() {
+  }
+  
   
 }
 

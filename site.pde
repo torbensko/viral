@@ -37,6 +37,18 @@ class Site extends Entity {
     }
     ellipse(x, y, size*scale, size*scale);
   }
+  
+  // Checks whether this sites hold the same file, taking into account duplicates
+  boolean holdsItem(Item i) {
+    ArrayList<Item> clone = (ArrayList<Item>) items.clone();
+    
+    Item comp = (i.master != null) ? i.master : i;
+    boolean holdsItem = false;
+    for(Item it : clone) {
+      holdsItem = holdsItem || comp == it.master || comp == it;
+    }
+    return holdsItem;
+  }
 }
 
 
@@ -51,13 +63,14 @@ class YouTube extends Site {
     followable = true;
   }
   
-  void transferComplete(Item i) {
-    super.transferComplete(i);
+  void acceptItem(Item i) {
+    super.acceptItem(i);
     
     // send back the youtube version (i.e. the one with links)
     Item ytv = new Item(x, y, 1, null);
     ytv.links.add(youtube);
     ytv.links.add(project);
+    items.add(ytv);
     
     ytv.sendTo(researcher);
   }
@@ -88,8 +101,8 @@ class Server extends Site {
     privatelyActive = true;
   }
   
-  void transferComplete(Item i) {
-    super.transferComplete(i);
+  void acceptItem(Item i) {
+    super.acceptItem(i);
     if(floor(random(SERVER_GROW_CHANCE)) % SERVER_GROW_CHANCE == 0)
       size += SERVER_GROW_AMOUNT;
   }
