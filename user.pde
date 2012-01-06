@@ -138,8 +138,8 @@ class Researcher extends User {
     do {
       // every time, we look a litte further
       browseRange += BROWSE_INCREASE;
-      boolean newLink = browse();
-      if(!browsing.holdsItem(currentVideo)) {
+      browse();
+      if(!browsing.holdsItem(currentVideo, true)) {
         currentVideo.clone().sendTo(browsing);
         promoted = true;
       }
@@ -155,11 +155,13 @@ class Surfer extends User {
   
   Item waitingFor;
   System system;
+  ArrayList<YouTubeVid> watching;
   
   Surfer(int x, int y, float scale) {
     super(x, y, scale); 
     colour = #99DDFF;
     size = 30;
+    watching = new ArrayList<YouTubeVid>();
   }
   
   void occassionalThink() {
@@ -168,6 +170,12 @@ class Surfer extends User {
     
     if(system != null)
       system.use(); // occassionally think to play the game
+    
+    if(watching.size() > 0) {
+      for(YouTubeVid v : (ArrayList<YouTubeVid>) watching)
+        discardItem(v);
+      watching.clear();
+    }
     
   }
   
@@ -179,6 +187,8 @@ class Surfer extends User {
     
     if(i instanceof System)
       system = (System) i;
+    if(i instanceof YouTubeVid)
+      watching.add((YouTubeVid) i);
     
     for(Site s : (ArrayList<Site>) i.links.clone()) {
       checkLinkForNewItem(s);
@@ -195,7 +205,6 @@ class Surfer extends User {
       if(!holdsItem(i)) {
         waitingFor = i.clone();
         waitingFor.sendTo(this);
-        
         privatelyActive = true;
         break;
       }

@@ -23,6 +23,7 @@ class Item extends Entity {
   int yDest;
   float duration;
   Entity receiver, sender;
+  boolean hidden;
   
   // Create an Item with an initial position and reference to the master copy
   // of this item, used for matching duplicated items
@@ -75,6 +76,10 @@ class Item extends Entity {
     startTime = millis();
   }
   
+  void moveTo(int x, int y) {
+    moveTo(x, y, null, null, -1);
+  }
+  
   void think() {
     if(startTime != NOT_MOVING) {
       float progress = clamp((millis() - startTime) / duration);
@@ -95,24 +100,29 @@ class Item extends Entity {
   }
   
   void preDraw() {
+    if(hidden)
+      return;
+    
     // draw the links to the other sites
     strokeWeight(ITEM_LINK_LINE_WEIGHT);
     for(Site s : links) {
       stroke(whiten(s.colour, ITEM_LINK_LINE_WHITENESS));
       // we draw the second half in the third pass
-      line((x + s.x)/2, (y + s.y)/2, s.x, s.y);
+      line(lerp(x, s.x, 0.2), lerp(y, s.y, 0.2), s.x, s.y);
     }
   }
   
   void draw() {}
   
   void postDraw() {
+    if(hidden)
+      return;
     
     // we draw the second half now so it overlaps the site this item may be sitting on
     strokeWeight(ITEM_LINK_LINE_WEIGHT);
     for(Site s : links) {
       stroke(whiten(s.colour, ITEM_LINK_LINE_WHITENESS));
-      line(x, y, (x + s.x)/2, (y + s.y)/2);
+      line(x, y, lerp(x, s.x, 0.2), lerp(y, s.y, 0.2));
     }
     
     fill(colour);
@@ -133,6 +143,20 @@ class Item extends Entity {
   boolean compare(Item i) {
     i = (i.master != null) ? i.master : i;
     return i == this.master || i == this;
+  }
+  
+}
+
+class YouTubeVid extends Item {
+  
+  YouTubeVid(int x, int y, float scale, Item master) {
+    super(x, y, scale, master);
+    colour = #BB0000;
+    links.add(youtube);
+  }
+  
+  YouTubeVid clone() {
+    return (YouTubeVid) new YouTubeVid(x, y, scale, null).getDetailsFrom(this);
   }
   
 }

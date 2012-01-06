@@ -5,11 +5,14 @@ final int ACTIVE_RANGE = 200;
 
 final int ACTIVE_PERIOD_CHECK = 1000; // in millis
 
+final float REARRANGE_DURATION = 200; // in millis
+
 static ArrayList<Entity> entities = new ArrayList<Entity>();
 
 class Entity {
   
   ArrayList<Item> items;
+  ArrayList<Item> pastItems;
   
   int x;
   int y;
@@ -22,6 +25,7 @@ class Entity {
   
   Entity(int x, int y, float scale) {
     items = new ArrayList<Item>();
+    pastItems = new ArrayList<Item>();
     entities.add(this);
     this.x = x; 
     this.y = y;
@@ -32,6 +36,7 @@ class Entity {
     items.add(i);
     i.holders.add(this); // let it know we are now holding a reference to it
     isActive = true;
+    layoutItems();
   }
   
   void receiverGotItem(Item i) {}
@@ -94,13 +99,46 @@ class Entity {
   void postDraw() {}
   
   // Checks whether this sites hold the same file, taking into account duplicates
-  boolean holdsItem(Item i) {
+  boolean holdsItem(Item i, boolean includePast) {
 
     boolean holdsItem = false;
-    for(Item it : (ArrayList<Item>) items.clone())
+    ArrayList<Item> check = (ArrayList<Item>) items.clone();
+    if(includePast)
+      check.addAll(pastItems);
+      
+    for(Item it : check)
       holdsItem = holdsItem || it.compare(i);
     
     return holdsItem;
+  }
+  
+  boolean holdsItem(Item i) {
+    return holdsItem(i, true);
+  }
+  
+  void discardItem(Item i) {
+    items.remove(i);
+    pastItems.add(i);
+    i.hidden = true;
+    layoutItems();
+  }
+  
+  // Position the items within the entity so they do not overlap each other, by
+  // placing them in a circular pattern
+  void layoutItems() {
+    if(items.size() == 0)
+      return;
+      
+    if(items.size() == 1) {
+      items.get(0).moveTo(x, y, null, null, REARRANGE_DURATION);
+      return;
+    }
+    
+    for(int i = 0; i < items.size(); i++) {
+      float rad = 2 * PI / items.size() * i;
+      Item it = items.get(i);
+      it.moveTo((int) (it.size * sin(rad) + x), (int) (it.size * cos(rad) + it.y), null, null, REARRANGE_DURATION);
+    }
   }
   
 }
