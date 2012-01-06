@@ -69,8 +69,8 @@ class Server extends Site {
     privatelyActive = true;
   }
   
-  void download(Item i) {
-    super.download(i);
+  void transferComplete(Item i) {
+    super.transferComplete(i);
     if(floor(random(SERVER_GROW_CHANCE)) % SERVER_GROW_CHANCE == 0)
       size += SERVER_GROW_AMOUNT;
   }

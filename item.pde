@@ -1,105 +1,86 @@
 import java.util.ArrayList;
 
-final int ACTIVE_INNER = 100;
-final int ACTIVE_RANGE = 200;
-final int ACTIVE_PERIOD_CHECK = 1000; // in millis
+static ArrayList<Item> items = new ArrayList<Item>();
 
-class Item {
-  final int ITEM_VIDEO = 0;
-  final int ITEM_SYSTEM = 1;
+class Item extends Entity {
   
-  int type;
+  Item master;
   
-  Item(int type) {
-    this.type = type;
+  final int NOT_MOVING = -1;
+  
+  float startTime = NOT_MOVING;
+  int xDest;
+  int yDest;
+  int xInit;
+  int yInit;
+  float duration;
+  Entity notify;
+  
+  // Create an Item with an initial position and reference to the master copy
+  // of this item, used for matching duplicated items
+  Item(int x, int y, float scale, Item master) {
+    super(x, y, scale);
+    this.master = master;
+    colour = #BBCCFF;
+    size = 10;
+    items.add(this);
+    privatelyActive = true;
   }
   
-}
-
-static ArrayList<Entity> entities = new ArrayList<Entity>();
-
-class Entity {
-  
-  ArrayList<Item> items;
-  
-  int x;
-  int y;
-  float scale;
-  boolean isActive;
-  protected boolean privatelyActive; // so only we know we are active
-  color colour = #666666;
-  color activeColour;
-  int size = 10;
-  
-  Entity(int x, int y, float scale) {
-    items = new ArrayList<Item>();
-    entities.add(this);
-    this.x = x; 
-    this.y = y;
-    this.scale = scale;
-  }
-  
-  void download(Item i) {
-    items.add(i);
-    isActive = true;
-  }
-  
-  void remove() {
-    entities.remove(this);
-  }
-  
-  float distance(Entity e) {
-    return sqrt(pow(e.x - x, 2) + pow(e.y - y, 2));
-  }
-  
-  boolean containsClick() {
-    return 
-        (mouseX > x-size/2 && mouseX < x+size/2) &&
-        (mouseY > y-size/2 && mouseY < y+size/2);
+  // Tell it to move somewhere over a certain period and notify the receiver
+  // when there
+  // @arg notify    The entity to notify when complete. This can be null
+  void move(int x, int y, float duration, Entity notify) {
+    xDest = x;
+    yDest = y;
+    xInit = this.x;
+    yInit = this.y;
+    this.duration = duration;
+    this.notify = notify;
+    startTime = millis();
   }
   
   void think() {
+    if(startTime != NOT_MOVING) {
+      float progress = clamp((millis() - startTime) / duration);
+      if(progress == 1) {
+        x = xDest;
+        y = yDest;
+        startTime = NOT_MOVING;
+        if(notify != null)
+          notify.transferComplete(this);
+        println("complete");
+      } else {
+        progress = ease(progress);
+        x = (int) fade(xInit, xDest, progress);
+        y = (int) fade(yInit, yDest, progress);
+        println(progress);
+      }
+    }
   }
   
-  private float strengthDiff = 0;
-  private float strengthTime = 0; // offset them from each other
-  private float strengthPrev = 0;
+  void preDraw() {}
+  void draw() {}
   
-  float getStrength() {
-    if(isActive || privatelyActive)
-      return 1;
-    
-    strengthDiff += millis() - strengthTime;
-    strengthTime  = millis();
-    
-    if(strengthDiff < ACTIVE_PERIOD_CHECK)
-      return strengthPrev;
-    
-    strengthDiff = 0;
-    
-    float smallest = 10000000;
-    for(Entity e : entities)
-      smallest = (e == this || !e.isActive) 
-          ? smallest
-          : min(smallest, e.distance(this));
-    
-    strengthPrev = 1 - min(1, max(0, smallest-ACTIVE_INNER)/ACTIVE_RANGE);
-    return strengthPrev;
+  void postDraw() {
+    fill(colour);
+    noStroke();
+    ellipse(x, y, size*scale, size*scale);
   }
   
-  // for bottom level elements
-  void preDraw() {
-  }
-  
-  // for second level elements
-  void draw() {
-    if(mousePressed)
-      stroke(127);
-    else
-      noStroke();
-    int white = (int)(255 * (1 - getStrength()));
-    activeColour = color(red(colour) + white, green(colour) + white, blue(colour) + white);
-    fill(activeColour);
+  void remove() {
+    super.remove();
+    items.remove(this);
   }
   
 }
+
+//class Video extends Item {
+//}
+//
+//class System extends Item {
+//}
+//
+//class Data extends Item {
+//}
+

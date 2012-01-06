@@ -7,6 +7,8 @@ final int BROWSE_SIZE = 200;
 final int BROWSE_PERIOD_MIN = 1000;
 final int BROWSE_PERIOD_MAX = 4000;
 
+final float TRANSFER_TIME_INIT_YOUTUBE_UPLOAD = 2000;
+
 class User extends Entity {
   
   Site browsing;
@@ -67,6 +69,15 @@ class Researcher extends User {
     isActive = true;
     colour = #FF00CC;
     size = 40;
+  }
+  
+  boolean containsClick() {
+    boolean contains = super.containsClick();
+    if(contains && youtube != null) {
+      Item i = new Item(x, y, 1, null);
+      i.move(youtube.x, youtube.y, TRANSFER_TIME_INIT_YOUTUBE_UPLOAD, youtube);
+    }
+    return contains;
   }
   
 }

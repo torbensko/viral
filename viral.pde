@@ -43,12 +43,13 @@ void draw() {
   for(Entity e : entities)  e.think();
   for(Entity e : entities)  e.preDraw();
   for(Entity e : entities)  e.draw();
+  for(Entity e : entities)  e.postDraw();
 }
 
 void mouseClicked() {
-  if(researcher == null) {
-    for(User u : users) {
-      if(u.containsClick()) {
+  for(User u : users) {
+    if(u.containsClick()) {
+      if(researcher == null) {
         new Researcher(u.x, u.y, SCALE);
         u.remove();
         break; // cannot use our iterator further
