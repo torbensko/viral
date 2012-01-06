@@ -2,7 +2,9 @@ import java.util.ArrayList;
 
 final int SERVER_GROW_CHANCE = 4;
 final int SERVER_GROW_AMOUNT = 2;
+
 final int FOLLOWABLE_STROKE_WEIGHT = 3;
+final color FOLLOWABLE_COLOR = #FFAA11;
 
 static ArrayList<Site> sites = new ArrayList<Site>();
 static YouTube youtube;
@@ -14,6 +16,8 @@ class Site extends Entity {
 
   boolean followable;
   color followableColor;
+  ArrayList<User> followers;
+  
   boolean browsable = true;
   
   Site(int x, int y, float scale) {
@@ -21,7 +25,16 @@ class Site extends Entity {
     sites.add(this);
     size = 50;
     colour = #AAFFBB;
-    followableColor = #FFAA11;
+    followers = new ArrayList<User>();
+  }
+  
+  void acceptItem(Item i) {
+    super.acceptItem(i);
+    
+    // automatic notifications
+    for(User u : (ArrayList<User>) followers.clone()) {
+      i.clone().sendTo(u);
+    }
   }
   
   void remove() {
@@ -29,10 +42,18 @@ class Site extends Entity {
     sites.remove(this);
   }
   
+  void preDraw() {
+    for(User u : (ArrayList<User>) followers.clone()) {
+      strokeWeight(FOLLOWABLE_STROKE_WEIGHT);
+      stroke(FOLLOWABLE_COLOR);
+      line(x, y, u.x, u.y);
+    }
+  }
+  
   void draw() {
     super.draw();
     if(followable) {
-      stroke(followableColor);
+      stroke(FOLLOWABLE_COLOR);
       strokeWeight(FOLLOWABLE_STROKE_WEIGHT);
     }
     ellipse(x, y, size*scale, size*scale);

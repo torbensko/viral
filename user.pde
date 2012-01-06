@@ -8,6 +8,8 @@ final int BROWSE_SIZE = 200;
 final int BROWSE_INCREASE = 10;
 final int BROSWE_LINE_WEIGHT = 1;
 
+final int FOLLOWING_CHANCE = 5;
+
 final int OCCASSIONAL_THINK_PERIOD_MIN = 1000;
 final int OCCASSIONAL_THINK_PERIOD_MAX = 4000;
 
@@ -96,7 +98,7 @@ class Researcher extends User {
       switch(state) {
         case STATE_INIT :           publishSystem(); break;
         case STATE_CREATING_VIDEO : publishVideo(); break;
-        case STATE_PROMOTING:       promoteVideo(); break;
+        case STATE_PROMOTING:       publishVideo(); break; // promoteVideo()
       }
     }
     return contains;
@@ -127,7 +129,7 @@ class Researcher extends User {
   
   void acceptItem(Item i) {
     super.acceptItem(i);
-    // we only get items from YouTube, so we can assume its the video
+    // we only get items from YouTube, so we can assume it's the video
     currentVideo = i;
     state = STATE_PROMOTING;
   }
@@ -166,7 +168,7 @@ class Surfer extends User {
   
   void occassionalThink() {
     browse();
-    checkLinkForNewItem(browsing);
+    checkLink(browsing);
     
     if(system != null)
       system.use(); // occassionally think to play the game
@@ -190,6 +192,7 @@ class Surfer extends User {
     
     if(i instanceof YouTubeVid) {
       watching.add((YouTubeVid) i);
+      
       // repost this to another site
       browse();
       if(!browsing.holdsItem(i))
@@ -197,11 +200,16 @@ class Surfer extends User {
     }
     
     for(Site s : (ArrayList<Site>) i.links.clone()) {
-      checkLinkForNewItem(s);
+      checkLink(s);
+      
+      // consider following the site
+      if(s.followable && floor(random(FOLLOWING_CHANCE)) % FOLLOWING_CHANCE == 0)
+        s.followers.add(this);
     }
   }
   
-  void checkLinkForNewItem(Site link) {
+  // Look to see if a link has a new item at the end of it
+  void checkLink(Site link) {
     // can only look for one thing at a time
     if(waitingFor != null || browsing == null)
       return;
