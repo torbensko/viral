@@ -109,6 +109,7 @@ class Researcher extends User {
     if(project != null && server != null) {
       browsing = project;
       Item study = new Item(x, y, scale, null);
+      study.colour = #00FF00;
       study.links.add(server);
       study.sendTo(project, this, -1);
       state = STATE_CREATING_VIDEO;
@@ -150,10 +151,11 @@ class Researcher extends User {
   void occassionalThink() {
   }
   
-  
 }
 
 class Surfer extends User {
+  
+  Item waitingFor;
   
   Surfer(int x, int y, float scale) {
     super(x, y, scale); 
@@ -163,6 +165,35 @@ class Surfer extends User {
   
   void occassionalThink() {
     boolean newLink = browse();
+    if(newLink) {
+      checkLinkForNewItem(browsing);
+    }
+  }
+  
+  void acceptItem(Item i) {
+    super.acceptItem(i);
+    
+    if(waitingFor == i)
+      waitingFor = null;
+    
+    for(Site s : (ArrayList<Site>) i.links.clone())
+      checkLinkForNewItem(s);
+  }
+  
+  void checkLinkForNewItem(Site link) {
+    // can only look for one thing at a time
+    if(waitingFor != null)
+      return;
+    
+    for(Item i : (ArrayList<Item>) browsing.items.clone()) {
+      // found a new item that we are interested in
+      if(!holdsItem(i)) {
+        waitingFor = i.clone();
+        waitingFor.sendTo(this);
+        privatelyActive = true;
+        break;
+      }
+    }
   }
   
   void remove() {

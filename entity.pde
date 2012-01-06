@@ -92,4 +92,14 @@ class Entity {
   
   void postDraw() {}
   
+  // Checks whether this sites hold the same file, taking into account duplicates
+  boolean holdsItem(Item i) {
+
+    boolean holdsItem = false;
+    for(Item it : (ArrayList<Item>) items.clone())
+      holdsItem = holdsItem || it.compare(i);
+    
+    return holdsItem;
+  }
+  
 }

@@ -113,6 +113,13 @@ class Item extends Entity {
     super.remove();
     items.remove(this);
   }
+  
+  // Compares two items, taking inaccount they can be duplicates of each other
+  boolean compare(Item i) {
+    i = (i.master != null) ? i.master : i;
+    return i == this.master || i == this;
+  }
+  
 }
 
 //class Video extends Item {

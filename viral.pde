@@ -7,6 +7,12 @@ void setup() {
   size(800, 800);
   smooth();
   performLayout();
+  
+  // automatic layouts
+  makeResearcher(users.get(0));
+  makeYouTube(sites.get(0));
+  makeServer(sites.get(0));
+  makeProjectSite(sites.get(0));
 }
 
 // Sccatter the nodes around randomly, without placing any two too near to each other
@@ -49,25 +55,49 @@ void draw() {
 void mouseClicked() {
   for(User u : users) {
     if(u.containsClick()) {
-      if(researcher == null) {
-        new Researcher(u.x, u.y, SCALE);
-        u.remove();
-        break; // cannot use our iterator further
-      }
+      if(researcher == null)
+        makeResearcher(u);
+      break; // do not use our iterator further
     }
   }
-  if(youtube == null || project == null || server == null) {
-    for(Site s : sites) {
-      if(s.containsClick()) {
-        if(youtube == null)
-          new YouTube(s.x, s.y, SCALE);
-        else if(project == null)
-          new ProjectSite(s.x, s.y, SCALE);
-        else
-          new Server(s.x, s.y, SCALE);
-        s.remove();
-        break; // cannot use our iterator further
-      }
+  for(Site s : sites) {
+    if(s.containsClick()) {
+      if(youtube == null)
+        makeYouTube(s);
+      else if(project == null)
+        makeProjectSite(s);
+      else if(server == null)
+        makeServer(s);
+      break; // do not use our iterator further
     }
   }
 }
+
+void makeResearcher(User u) {
+  if(researcher == null) {
+    new Researcher(u.x, u.y, SCALE);
+    u.remove();
+  }
+}
+
+void makeYouTube(Site s) {
+  if(youtube == null && s != project && s != server) {
+    new YouTube(s.x, s.y, SCALE);
+    s.remove();
+  }
+}
+
+void makeProjectSite(Site s) {
+  if(project == null && s != youtube && s != server) {
+    new ProjectSite(s.x, s.y, SCALE);
+    s.remove();
+  }
+}
+
+void makeServer(Site s) {
+  if(server == null && s != youtube && s != project) {
+    new Server(s.x, s.y, SCALE);
+    s.remove();
+  }
+}
+

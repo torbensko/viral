@@ -37,18 +37,6 @@ class Site extends Entity {
     }
     ellipse(x, y, size*scale, size*scale);
   }
-  
-  // Checks whether this sites hold the same file, taking into account duplicates
-  boolean holdsItem(Item i) {
-    ArrayList<Item> clone = (ArrayList<Item>) items.clone();
-    
-    Item comp = (i.master != null) ? i.master : i;
-    boolean holdsItem = false;
-    for(Item it : clone) {
-      holdsItem = holdsItem || comp == it.master || comp == it;
-    }
-    return holdsItem;
-  }
 }
 
 

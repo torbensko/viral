@@ -22,4 +22,4 @@ color whiten(color colour, float amount) {
   int white = (int)(255 * amount);
   return color(red(colour) + white, green(colour) + white, blue(colour) + white);
 }
-  
+
