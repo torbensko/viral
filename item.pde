@@ -12,6 +12,7 @@ class Item extends Entity {
   
   Item master;
   ArrayList<Site> links;
+  ArrayList<Entity> holders;
   
   final int NOT_MOVING = -1;
   
@@ -33,15 +34,23 @@ class Item extends Entity {
     items.add(this);
     privatelyActive = true;
     links = new ArrayList<Site>();
+    holders = new ArrayList<Entity>();
     duration = TRANSFER_TIME_DEFAULT;
   }
   
   Item clone() {
-    Item i = new Item(x, y, scale, (master != null) ? master : this);
-    i.links = (ArrayList<Site>) links.clone();
-    i.colour = colour;
-    i.size = size;
-    return i;
+    return new Item(x, y, scale, null).getDetailsFrom(this);
+  }
+  
+  Item getDetailsFrom(Item i) {
+    x = i.x;
+    y = i.y;
+    scale = scale;
+    master = (i.master != null) ? i.master : i;
+    links = (ArrayList<Site>) i.links.clone();
+    colour = i.colour;
+    size = i.size;
+    return this;
   }
   
   void sendTo(Entity receiver) {
@@ -114,6 +123,10 @@ class Item extends Entity {
   void remove() {
     super.remove();
     items.remove(this);
+    
+    // remove ourselves from the list of items each site has
+    for(Entity e : (ArrayList<Entity>) holders)
+      e.items.remove(this);
   }
   
   // Compares two items, taking inaccount they can be duplicates of each other
@@ -124,12 +137,33 @@ class Item extends Entity {
   
 }
 
-//class Video extends Item {
-//}
-//
-//class System extends Item {
-//}
-//
-//class Data extends Item {
-//}
+class System extends Item {
+  
+  System(int x, int y, float scale, Item master) {
+    super(x, y, scale, master);
+    colour = #00FF00;
+    if(server != null)
+      links.add(server);
+  }
+  
+  System clone() {
+    return (System) new System(x, y, scale, null).getDetailsFrom(this);
+  }
+  
+  void use() {
+    new Data(x, y, scale, null).sendTo(server);
+  }
+  
+}
+
+class Data extends Item {
+  
+  Data(int x, int y, float scale, Item master) {
+    super(x, y, scale, master);
+    size = 5;
+    if(server != null)
+      colour = server.colour;
+  }
+
+}
 

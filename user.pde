@@ -108,10 +108,8 @@ class Researcher extends User {
   void publishSystem() {
     if(project != null && server != null) {
       browsing = project;
-      Item study = new Item(x, y, scale, null);
-      study.colour = #00FF00;
-      study.links.add(server);
-      study.sendTo(project, this, -1);
+      new System(x, y, scale, null).clone().sendTo(project);
+      
       state = STATE_CREATING_VIDEO;
     }
   }
@@ -156,6 +154,7 @@ class Researcher extends User {
 class Surfer extends User {
   
   Item waitingFor;
+  System system;
   
   Surfer(int x, int y, float scale) {
     super(x, y, scale); 
@@ -166,6 +165,10 @@ class Surfer extends User {
   void occassionalThink() {
     browse();
     checkLinkForNewItem(browsing);
+    
+    if(system != null)
+      system.use(); // occassionally think to play the game
+    
   }
   
   void acceptItem(Item i) {
@@ -174,9 +177,12 @@ class Surfer extends User {
     if(waitingFor == i)
       waitingFor = null;
     
-    println("checking");
-    for(Site s : (ArrayList<Site>) i.links.clone())
+    if(i instanceof System)
+      system = (System) i;
+    
+    for(Site s : (ArrayList<Site>) i.links.clone()) {
       checkLinkForNewItem(s);
+    }
   }
   
   void checkLinkForNewItem(Site link) {
@@ -184,12 +190,12 @@ class Surfer extends User {
     if(waitingFor != null || browsing == null)
       return;
     
-    for(Item i : (ArrayList<Item>) browsing.items.clone()) {
+    for(Item i : (ArrayList<Item>) link.items.clone()) {
       // found a new item that we are interested in
       if(!holdsItem(i)) {
         waitingFor = i.clone();
         waitingFor.sendTo(this);
-        println(this.hashCode()+" requesting "+i.hashCode());
+        
         privatelyActive = true;
         break;
       }

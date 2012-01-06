@@ -30,6 +30,7 @@ class Entity {
   
   void acceptItem(Item i) {
     items.add(i);
+    i.holders.add(this); // let it know we are now holding a reference to it
     isActive = true;
   }
   

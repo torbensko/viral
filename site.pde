@@ -77,6 +77,11 @@ class ProjectSite extends Site {
     browsable = false;
   }
   
+  void acceptItem(Item i) {
+    super.acceptItem(i);
+    println(items.size());
+  }
+  
 }
 
 class Server extends Site {
@@ -91,7 +96,7 @@ class Server extends Site {
   }
   
   void acceptItem(Item i) {
-    super.acceptItem(i);
+    i.remove();
     if(floor(random(SERVER_GROW_CHANCE)) % SERVER_GROW_CHANCE == 0)
       size += SERVER_GROW_AMOUNT;
   }
