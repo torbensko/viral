@@ -73,6 +73,8 @@ class Item extends Entity {
     if(duration > 0)
       this.duration = duration;
     this.receiver = receiver;
+    if(receiver != null)
+      receiver.pendingItem(this); // let them know we are coming
     startTime = millis();
   }
   

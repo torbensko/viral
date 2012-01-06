@@ -13,6 +13,7 @@ class Entity {
   
   ArrayList<Item> items;
   ArrayList<Item> pastItems;
+  ArrayList<Item> pendingItems;
   
   int x;
   int y;
@@ -26,14 +27,20 @@ class Entity {
   Entity(int x, int y, float scale) {
     items = new ArrayList<Item>();
     pastItems = new ArrayList<Item>();
+    pendingItems = new ArrayList<Item>();
     entities.add(this);
     this.x = x; 
     this.y = y;
     this.scale = scale;
   }
   
+  void pendingItem(Item i) {
+    pendingItems.add(i);
+  }
+  
   void acceptItem(Item i) {
     items.add(i);
+    pendingItems.remove(i);
     i.holders.add(this); // let it know we are now holding a reference to it
     isActive = true;
     layoutItems();
@@ -99,12 +106,14 @@ class Entity {
   void postDraw() {}
   
   // Checks whether this sites hold the same file, taking into account duplicates
-  boolean holdsItem(Item i, boolean includePast) {
+  boolean holdsItem(Item i, boolean includePast, boolean includePending) {
 
     boolean holdsItem = false;
     ArrayList<Item> check = (ArrayList<Item>) items.clone();
     if(includePast)
       check.addAll(pastItems);
+    if(includePending)
+      check.addAll(pendingItems);
       
     for(Item it : check)
       holdsItem = holdsItem || it.compare(i);
@@ -113,7 +122,7 @@ class Entity {
   }
   
   boolean holdsItem(Item i) {
-    return holdsItem(i, true);
+    return holdsItem(i, true, true);
   }
   
   void discardItem(Item i) {

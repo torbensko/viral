@@ -139,7 +139,7 @@ class Researcher extends User {
       // every time, we look a litte further
       browseRange += BROWSE_INCREASE;
       browse();
-      if(!browsing.holdsItem(currentVideo, true)) {
+      if(!browsing.holdsItem(currentVideo)) {
         currentVideo.clone().sendTo(browsing);
         promoted = true;
       }
@@ -187,8 +187,14 @@ class Surfer extends User {
     
     if(i instanceof System)
       system = (System) i;
-    if(i instanceof YouTubeVid)
+    
+    if(i instanceof YouTubeVid) {
       watching.add((YouTubeVid) i);
+      // repost this to another site
+      browse();
+      if(!browsing.holdsItem(i))
+        i.clone().sendTo(browsing);
+    }
     
     for(Site s : (ArrayList<Site>) i.links.clone()) {
       checkLinkForNewItem(s);
