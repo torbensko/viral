@@ -40,8 +40,9 @@ boolean _tryPlacement() {
 
 void draw() {
   background(255);
-  for(Entity e : entities) 
-    e.draw();
+  for(Entity e : entities)  e.think();
+  for(Entity e : entities)  e.preDraw();
+  for(Entity e : entities)  e.draw();
 }
 
 void mouseClicked() {
@@ -54,13 +55,15 @@ void mouseClicked() {
       }
     }
   }
-  if(youtube == null || project == null) {
+  if(youtube == null || project == null || server == null) {
     for(Site s : sites) {
       if(s.containsClick()) {
         if(youtube == null)
           new YouTube(s.x, s.y, SCALE);
-        else
+        else if(project == null)
           new ProjectSite(s.x, s.y, SCALE);
+        else
+          new Server(s.x, s.y, SCALE);
         s.remove();
         break; // cannot use our iterator further
       }

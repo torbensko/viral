@@ -19,13 +19,16 @@ class Item {
 static ArrayList<Entity> entities = new ArrayList<Entity>();
 
 class Entity {
+  
   ArrayList<Item> items;
   
   int x;
   int y;
   float scale;
   boolean isActive;
+  protected boolean privatelyActive; // so only we know we are active
   color colour = #666666;
+  color activeColour;
   int size = 10;
   
   Entity(int x, int y, float scale) {
@@ -55,13 +58,15 @@ class Entity {
         (mouseY > y-size/2 && mouseY < y+size/2);
   }
   
+  void think() {
+  }
   
   private float strengthDiff = 0;
   private float strengthTime = 0; // offset them from each other
   private float strengthPrev = 0;
   
   float getStrength() {
-    if(isActive)
+    if(isActive || privatelyActive)
       return 1;
     
     strengthDiff += millis() - strengthTime;
@@ -82,12 +87,19 @@ class Entity {
     return strengthPrev;
   }
   
+  // for bottom level elements
+  void preDraw() {
+  }
+  
+  // for second level elements
   void draw() {
     if(mousePressed)
       stroke(127);
     else
       noStroke();
-    fill(colour, 255 * getStrength());
+    int white = (int)(255 * (1 - getStrength()));
+    activeColour = color(red(colour) + white, green(colour) + white, blue(colour) + white);
+    fill(activeColour);
   }
   
 }
