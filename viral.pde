@@ -13,6 +13,10 @@ void setup() {
   makeYouTube(sites.get(0));
   makeServer(sites.get(0));
   makeProjectSite(sites.get(0));
+  
+  // setup the project
+  researcher.publishSystem();
+  researcher.publishVideo();
 }
 
 // Sccatter the nodes around randomly, without placing any two too near to each other

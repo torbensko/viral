@@ -52,15 +52,16 @@ class YouTube extends Site {
   }
   
   void acceptItem(Item i) {
-    super.acceptItem(i);
-    
     // send back the youtube version (i.e. the one with links)
     Item ytv = new Item(x, y, 1, null);
+    ytv.colour = #BB0000;
     ytv.links.add(youtube);
     ytv.links.add(project);
-    items.add(ytv);
     
-    ytv.sendTo(researcher);
+    super.acceptItem(ytv); // we do not want to accept the video we originally get
+    i.remove();
+    
+    ytv.clone().sendTo(researcher);
   }
   
 }

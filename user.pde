@@ -164,10 +164,8 @@ class Surfer extends User {
   }
   
   void occassionalThink() {
-    boolean newLink = browse();
-    if(newLink) {
-      checkLinkForNewItem(browsing);
-    }
+    browse();
+    checkLinkForNewItem(browsing);
   }
   
   void acceptItem(Item i) {
@@ -176,13 +174,14 @@ class Surfer extends User {
     if(waitingFor == i)
       waitingFor = null;
     
+    println("checking");
     for(Site s : (ArrayList<Site>) i.links.clone())
       checkLinkForNewItem(s);
   }
   
   void checkLinkForNewItem(Site link) {
     // can only look for one thing at a time
-    if(waitingFor != null)
+    if(waitingFor != null || browsing == null)
       return;
     
     for(Item i : (ArrayList<Item>) browsing.items.clone()) {
@@ -190,6 +189,7 @@ class Surfer extends User {
       if(!holdsItem(i)) {
         waitingFor = i.clone();
         waitingFor.sendTo(this);
+        println(this.hashCode()+" requesting "+i.hashCode());
         privatelyActive = true;
         break;
       }

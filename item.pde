@@ -39,6 +39,8 @@ class Item extends Entity {
   Item clone() {
     Item i = new Item(x, y, scale, (master != null) ? master : this);
     i.links = (ArrayList<Site>) links.clone();
+    i.colour = colour;
+    i.size = size;
     return i;
   }
   
