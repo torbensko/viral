@@ -1,5 +1,7 @@
-final int SEPERATION = 100;
-final int NODE_SIZE = 50;
+final int SEPERATION = 90;
+final float SCALE = 1;
+
+final int SITE_USER_RATIO = 3; // i.e. SITE_USER_RATIO users to every site
 
 void setup() {
   size(800, 800);
@@ -20,9 +22,9 @@ boolean _tryPlacement() {
   while(attempts > 0 && !placed) {
     int x = (int) random(width);
     int y = (int) random(height);
-    Entity entity = (millis()%2 == 0) 
-        ? new User(x, y, NODE_SIZE) 
-        : new Site(x, y, NODE_SIZE);
+    Entity entity = (millis() % SITE_USER_RATIO == 0) 
+        ? new Site(x, y, SCALE)
+        : new User(x, y, SCALE);
     boolean clash = false;
     for(Entity e : entities)
       clash = clash || (e != entity && e.distance(entity) < SEPERATION);
@@ -43,6 +45,25 @@ void draw() {
 }
 
 void mouseClicked() {
-  for(Entity e : entities)
-      e.checkClick();
+  if(researcher == null) {
+    for(User u : users) {
+      if(u.containsClick()) {
+        new Researcher(u.x, u.y, SCALE);
+        u.remove();
+        break; // cannot use our iterator further
+      }
+    }
+  }
+  if(youtube == null || project == null) {
+    for(Site s : sites) {
+      if(s.containsClick()) {
+        if(youtube == null)
+          new YouTube(s.x, s.y, SCALE);
+        else
+          new ProjectSite(s.x, s.y, SCALE);
+        s.remove();
+        break; // cannot use our iterator further
+      }
+    }
+  }
 }

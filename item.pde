@@ -23,15 +23,17 @@ class Entity {
   
   int x;
   int y;
-  int size;
+  float scale;
   boolean isActive;
+  color colour = #666666;
+  int size = 10;
   
-  Entity(int x, int y, int size) {
+  Entity(int x, int y, float scale) {
     items = new ArrayList<Item>();
     entities.add(this);
     this.x = x; 
     this.y = y;
-    this.size = size;
+    this.scale = scale;
   }
   
   void download(Item i) {
@@ -47,7 +49,7 @@ class Entity {
     return sqrt(pow(e.x - x, 2) + pow(e.y - y, 2));
   }
   
-  boolean checkClick() {
+  boolean containsClick() {
     return 
         (mouseX > x-size/2 && mouseX < x+size/2) &&
         (mouseY > y-size/2 && mouseY < y+size/2);
@@ -81,7 +83,11 @@ class Entity {
   }
   
   void draw() {
-    noStroke();
+    if(mousePressed)
+      stroke(127);
+    else
+      noStroke();
+    fill(colour, 255 * getStrength());
   }
   
 }
