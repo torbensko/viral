@@ -15,6 +15,11 @@ float clamp(float a) {
 
 // Fade from a and b, based on f
 float fade(float a, float b, float f) {
-  return f * a + (1 - f) * b;
+  return f * b + (1 - f) * a;
+}
+
+color whiten(color colour, float amount) {
+  int white = (int)(255 * amount);
+  return color(red(colour) + white, green(colour) + white, blue(colour) + white);
 }
   

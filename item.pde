@@ -1,10 +1,14 @@
 import java.util.ArrayList;
 
+final int ITEM_LINK_LINE_WEIGHT = 1;
+final float ITEM_LINK_LINE_WHITENESS = 0.7;
+
 static ArrayList<Item> items = new ArrayList<Item>();
 
 class Item extends Entity {
   
   Item master;
+  ArrayList<Site> links;
   
   final int NOT_MOVING = -1;
   
@@ -25,6 +29,13 @@ class Item extends Entity {
     size = 10;
     items.add(this);
     privatelyActive = true;
+    links = new ArrayList<Site>();
+  }
+  
+  Item clone() {
+    Item i = new Item(x, y, scale, (master != null) ? master : this);
+    i.links = (ArrayList<Site>) links.clone();
+    return i;
   }
   
   // Tell it to move somewhere over a certain period and notify the receiver
@@ -59,10 +70,27 @@ class Item extends Entity {
     }
   }
   
-  void preDraw() {}
+  void preDraw() {
+    // draw the links to the other sites
+    strokeWeight(ITEM_LINK_LINE_WEIGHT);
+    for(Site s : links) {
+      stroke(whiten(s.colour, ITEM_LINK_LINE_WHITENESS));
+      // we draw the second half in the third pass
+      line((x + s.x)/2, (y + s.y)/2, s.x, s.y);
+    }
+  }
+  
   void draw() {}
   
   void postDraw() {
+    
+    // we draw the second half now so it overlaps the site this item may be sitting on
+    strokeWeight(ITEM_LINK_LINE_WEIGHT);
+    for(Site s : links) {
+      stroke(whiten(s.colour, ITEM_LINK_LINE_WHITENESS));
+      line(x, y, (x + s.x)/2, (y + s.y)/2);
+    }
+    
     fill(colour);
     noStroke();
     ellipse(x, y, size*scale, size*scale);
@@ -72,7 +100,6 @@ class Item extends Entity {
     super.remove();
     items.remove(this);
   }
-  
 }
 
 //class Video extends Item {

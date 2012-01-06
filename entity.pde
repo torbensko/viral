@@ -80,12 +80,11 @@ class Entity {
   
   // for second level elements
   void draw() {
-    if(mousePressed)
+    if(mousePressed && (youtube == null || project == null || researcher == null || server == null))
       stroke(127);
     else
       noStroke();
-    int white = (int)(255 * (1 - getStrength()));
-    activeColour = color(red(colour) + white, green(colour) + white, blue(colour) + white);
+    activeColour = whiten(colour, 1 - getStrength());
     fill(activeColour);
   }
   

@@ -24,7 +24,7 @@ boolean _tryPlacement() {
     int y = (int) random(height);
     Entity entity = (millis() % SITE_USER_RATIO == 0) 
         ? new Site(x, y, SCALE)
-        : new User(x, y, SCALE);
+        : new Surfer(x, y, SCALE);
     boolean clash = false;
     for(Entity e : entities)
       clash = clash || (e != entity && e.distance(entity) < SEPERATION);
