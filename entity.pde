@@ -21,21 +21,19 @@ class Entity {
   
   int x;
   int y;
-  float scale;
   boolean isActive;
   protected boolean privatelyActive; // so only we know we are active
   color colour = #666666;
   color activeColour;
   int size = 10;
   
-  Entity(int x, int y, float scale) {
+  Entity(int x, int y) {
     items = new ArrayList<Item>();
     pastItems = new ArrayList<Item>();
     pendingItems = new ArrayList<Item>();
     entities.add(this);
     this.x = x; 
     this.y = y;
-    this.scale = scale;
   }
   
   void pendingItem(Item i) {
@@ -132,7 +130,7 @@ class Entity {
     if(genImg != null)
       image(genImg, x, y, size, size);
     else
-      ellipse(x, y, size*scale, size*scale);
+      ellipse(x, y, size * SCALE, size * SCALE);
   }
   
   void postDraw() {}

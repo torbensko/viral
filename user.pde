@@ -17,8 +17,8 @@ class User extends Entity {
   Site browsing;
   int browseRange;
   
-  User(int x, int y, float scale) {
-    super(x, y, scale);
+  User(int x, int y) {
+    super(x, y);
     users.add(this);
     browseRange = BROWSE_SIZE;
     img = loadImage("user.png");
@@ -63,8 +63,8 @@ class Researcher extends User {
   
   Item currentVideo;
   
-  Researcher(int x, int y, float scale) {
-    super(x, y, scale);
+  Researcher(int x, int y) {
+    super(x, y);
     researcher = this;
     isActive = true;
     colour = #FF00CC;
@@ -89,7 +89,7 @@ class Researcher extends User {
   void publishSystem() {
     if(project != null && server != null) {
       browsing = project;
-      new System(x, y, scale, null).clone().sendTo(project);
+      new System(x, y, null).clone().sendTo(project);
       
       state = STATE_CREATING_VIDEO;
     }
@@ -99,7 +99,7 @@ class Researcher extends User {
   void publishVideo() {
     if(youtube != null && project != null) {
       browsing = youtube;
-      Item i = new Item(x, y, scale, null);
+      Item i = new Item(x, y, null);
       i.links.add(project);
       i.sendTo(youtube);
       state = STATE_WAITING_FOR_YT;
@@ -138,8 +138,8 @@ class Surfer extends User {
   System system;
   ArrayList<YouTubeVid> watching;
   
-  Surfer(int x, int y, float scale) {
-    super(x, y, scale); 
+  Surfer(int x, int y) {
+    super(x, y); 
     colour = #99DDFF;
     size = 30;
     watching = new ArrayList<YouTubeVid>();

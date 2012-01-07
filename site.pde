@@ -23,8 +23,8 @@ class Site extends Entity {
   
   boolean browsable = true;
   
-  Site(int x, int y, float scale) {
-    super(x, y, scale);
+  Site(int x, int y) {
+    super(x, y);
     sites.add(this);
     size = 50;
     colour = #AAFFBB;
@@ -77,8 +77,8 @@ class Site extends Entity {
 
 class YouTube extends Site {
 
-  YouTube(int x, int y, float scale) {
-    super(x, y, scale);
+  YouTube(int x, int y) {
+    super(x, y);
     youtube = this;
     colour = #FF0000;
     size = 55;
@@ -88,7 +88,7 @@ class YouTube extends Site {
   
   void acceptItem(Item i) {
     // send back the youtube version (i.e. the one with links)
-    Item ytv = new YouTubeVid(x, y, 1, null);
+    Item ytv = new YouTubeVid(x, y, null);
     ytv.links.addAll(i.links);
     
     super.acceptItem(ytv); // we do not want to accept the video we originally get
@@ -104,8 +104,8 @@ class YouTube extends Site {
 
 class ProjectSite extends Site {
   
-  ProjectSite(int x, int y, float scale) {
-    super(x, y, scale);
+  ProjectSite(int x, int y) {
+    super(x, y);
     project = this;
     colour = #0000FF;
     size = 55;
@@ -125,8 +125,8 @@ class ProjectSite extends Site {
 
 class Server extends Site {
 
-  Server(int x, int y, float scale) {
-    super(x, y, scale);
+  Server(int x, int y) {
+    super(x, y);
     server = this;
     colour = #333333;
     size = 20;

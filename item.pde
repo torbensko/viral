@@ -27,8 +27,8 @@ class Item extends Entity {
   
   // Create an Item with an initial position and reference to the master copy
   // of this item, used for matching duplicated items
-  Item(int x, int y, float scale, Item master) {
-    super(x, y, scale);
+  Item(int x, int y, Item master) {
+    super(x, y);
     this.master = master;
     colour = #BBCCFF;
     size = 10;
@@ -40,13 +40,12 @@ class Item extends Entity {
   }
   
   Item clone() {
-    return new Item(x, y, scale, null).getDetailsFrom(this);
+    return new Item(x, y, null).getDetailsFrom(this);
   }
   
   Item getDetailsFrom(Item i) {
     x = i.x;
     y = i.y;
-    scale = scale;
     master = (i.master != null) ? i.master : i;
     links = (ArrayList<Site>) i.links.clone();
     colour = i.colour;
@@ -129,7 +128,7 @@ class Item extends Entity {
     
     fill(colour);
     noStroke();
-    ellipse(x, y, size*scale, size*scale);
+    ellipse(x, y, size * SCALE, size * SCALE);
   }
   
   void remove() {
@@ -151,41 +150,41 @@ class Item extends Entity {
 
 class YouTubeVid extends Item {
   
-  YouTubeVid(int x, int y, float scale, Item master) {
-    super(x, y, scale, master);
+  YouTubeVid(int x, int y, Item master) {
+    super(x, y, master);
     colour = #BB0000;
     links.add(youtube);
   }
   
   YouTubeVid clone() {
-    return (YouTubeVid) new YouTubeVid(x, y, scale, null).getDetailsFrom(this);
+    return (YouTubeVid) new YouTubeVid(x, y, null).getDetailsFrom(this);
   }
   
 }
 
 class System extends Item {
   
-  System(int x, int y, float scale, Item master) {
-    super(x, y, scale, master);
+  System(int x, int y, Item master) {
+    super(x, y, master);
     colour = #00FF00;
     if(server != null)
       links.add(server);
   }
   
   System clone() {
-    return (System) new System(x, y, scale, null).getDetailsFrom(this);
+    return (System) new System(x, y, null).getDetailsFrom(this);
   }
   
   void use() {
-    new Data(x, y, scale, null).sendTo(server);
+    new Data(x, y, null).sendTo(server);
   }
   
 }
 
 class Data extends Item {
   
-  Data(int x, int y, float scale, Item master) {
-    super(x, y, scale, master);
+  Data(int x, int y, Item master) {
+    super(x, y, master);
     size = 5;
     if(server != null)
       colour = server.colour;

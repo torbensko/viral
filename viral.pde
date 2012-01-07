@@ -1,7 +1,6 @@
 //import processing.video.*;
 
 final int SEPERATION = 90;
-final float SCALE = 1;
 
 final int SITE_USER_RATIO = 3; // i.e. SITE_USER_RATIO users to every site
 
@@ -53,8 +52,8 @@ boolean _tryPlacement() {
     int x = (int) random(width);
     int y = (int) random(height);
     Entity entity = (millis() % SITE_USER_RATIO == 0) 
-        ? new Site(x, y, SCALE)
-        : new Surfer(x, y, SCALE);
+        ? new Site(x, y)
+        : new Surfer(x, y);
     boolean clash = false;
     for(Entity e : entities)
       clash = clash || (e != entity && e.distance(entity) < SEPERATION);
@@ -117,28 +116,28 @@ void mouseClicked() {
 
 void makeResearcher(User u) {
   if(researcher == null) {
-    new Researcher(u.x, u.y, SCALE);
+    new Researcher(u.x, u.y);
     u.remove();
   }
 }
 
 void makeYouTube(Site s) {
   if(youtube == null && s != project && s != server) {
-    new YouTube(s.x, s.y, SCALE);
+    new YouTube(s.x, s.y);
     s.remove();
   }
 }
 
 void makeProjectSite(Site s) {
   if(project == null && s != youtube && s != server) {
-    new ProjectSite(s.x, s.y, SCALE);
+    new ProjectSite(s.x, s.y);
     s.remove();
   }
 }
 
 void makeServer(Site s) {
   if(server == null && s != youtube && s != project) {
-    new Server(s.x, s.y, SCALE);
+    new Server(s.x, s.y);
     s.remove();
   }
 }
