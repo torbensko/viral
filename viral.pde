@@ -10,6 +10,10 @@ final char KEY_AUTOSETUP = 'k';
 final char KEY_PUBLISH_SYSTEM = 's';
 final char KEY_PUBLISH_VIDEO = 'v';
 
+final int FPS = 25;
+final float SCALE = 0.5;
+final float SPEED = 1;
+
 //MovieMaker record; // allows us to record the sequence
 boolean recording = false;
 String recordPrefix = "";

@@ -3,10 +3,9 @@ import java.util.ArrayList;
 final int ACTIVE_INNER = 100;
 final int ACTIVE_RANGE = 200;
 
-final int OCCASSIONAL_THINK_PERIOD_MIN = 1000;
-final int OCCASSIONAL_THINK_PERIOD_MAX = 4000;
-
-final int ACTIVE_PERIOD_CHECK = 1000; // in millis
+// time based:
+final int OCCASSIONAL_THINK_PERIOD_MIN = 1 * FPS; // 1000;
+final int OCCASSIONAL_THINK_PERIOD_MAX = 4 * FPS; // 4000;
 
 final float REARRANGE_DURATION = 200; // in millis
 
@@ -26,6 +25,7 @@ class Entity {
   color colour = #666666;
   color activeColour;
   int size = floor(10 * SCALE);
+  float strength = 0;
   
   Entity(int x, int y) {
     items = new ArrayList<Item>();
@@ -64,15 +64,21 @@ class Entity {
         (mouseY > y-size/2 && mouseY < y+size/2);
   }
   
-  private float thinkTime;
-  private float thinkDiff;
+  //private float thinkTime;
+  private int thinkDiff;
   
   void think() {
-    thinkDiff -= millis() - thinkTime;
-    thinkTime  = millis();
+    
+    // time based:
+    //thinkDiff -= millis() - thinkTime;
+    //thinkTime  = millis();
+    // frame based:
+    thinkDiff--;
+    
     if(thinkDiff < 0) {
-      thinkDiff = random(OCCASSIONAL_THINK_PERIOD_MIN, OCCASSIONAL_THINK_PERIOD_MAX);
+      thinkDiff = floor(random(OCCASSIONAL_THINK_PERIOD_MIN, OCCASSIONAL_THINK_PERIOD_MAX));
       occassionalThink();
+      updateStrength();
     }
   }
   
@@ -83,17 +89,14 @@ class Entity {
   private float strengthPrev = 0;
   ArrayList<Entity> nearbyEntities;
   
-  float getStrength() {
-    if(isActive || privatelyActive)
-      return 1;
+  void updateStrength() {
+    if(isActive || privatelyActive) {
+      strength = 1;
+      return;
+    }
     
-    strengthDiff += millis() - strengthTime;
-    strengthTime  = millis();
-    
-    if(strengthDiff < ACTIVE_PERIOD_CHECK || nearbyEntities == null)
-      return strengthPrev;
-    
-    strengthDiff = 0;
+    if(nearbyEntities == null)
+      return;
     
     float smallest = 10000000;
     for(Entity e : nearbyEntities)
@@ -101,8 +104,7 @@ class Entity {
           ? smallest
           : min(smallest, e.distance(this));
     
-    strengthPrev = 1 - clamp((smallest - ACTIVE_INNER * SCALE) / ACTIVE_RANGE * SCALE);
-    return strengthPrev;
+    strength = 1 - clamp((smallest - ACTIVE_INNER * SCALE) / ACTIVE_RANGE * SCALE);
   }
   
   void setup() {
@@ -127,8 +129,6 @@ class Entity {
       stroke(127);
     else
       noStroke();
-    
-    float strength = getStrength();
     
     if(strength != pastStrength) {
       activeColour = whiten(colour, 1 - strength);
