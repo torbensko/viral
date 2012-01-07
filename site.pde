@@ -54,12 +54,11 @@ class Site extends Entity {
   }
   
   void draw() {
-    super.draw();
     if(followable) {
       stroke(FOLLOWABLE_COLOR);
       strokeWeight(FOLLOWABLE_STROKE_WEIGHT);
     }
-    ellipse(x, y, size*scale, size*scale);
+    super.draw();
   }
   
   void occassionalThink() {

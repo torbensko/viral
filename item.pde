@@ -95,8 +95,8 @@ class Item extends Entity {
           sender.receiverGotItem(this);
       } else {
         progress = ease(progress);
-        x = (int) fade(xInit, xDest, progress);
-        y = (int) fade(yInit, yDest, progress);
+        x = (int) lerp(xInit, xDest, progress);
+        y = (int) lerp(yInit, yDest, progress);
       }
     }
   }

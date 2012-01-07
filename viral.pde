@@ -36,6 +36,8 @@ void setup() {
       bufferNumber(now.get(Calendar.HOUR_OF_DAY), 2)+"-"+
       bufferNumber(now.get(Calendar.MINUTE), 2)+"/";
   
+  imageMode(CENTER);
+  
   //record = new MovieMaker(this, width, height, "test.mov", 30, MovieMaker.H263, MovieMaker.HIGH);
 }
 

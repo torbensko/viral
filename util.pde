@@ -4,18 +4,12 @@ float ease(float x) {
   return 3*x*x - 2*x*x*x;
 }
 
-// Clamp a value within a certain range
 float clamp(float a, float min, float max) {
-  return max(min, min(max, a));
+  return min(max, max(min, a));
 }
 
 float clamp(float a) {
   return clamp(a, 0, 1);
-}
-
-// Fade from a and b, based on f
-float fade(float a, float b, float f) {
-  return f * b + (1 - f) * a;
 }
 
 color whiten(color colour, float amount) {
@@ -35,3 +29,11 @@ String repeatString(String str, int n) {
   return s;
 }
 
+// Create an image in a certain colour with a given mask
+PImage generateImage(color c, PImage mask) {
+  PImage img = createImage(mask.width, mask.height, ARGB);
+  for(int w = 0; w < img.width; w++)
+    for(int h = 0; h < img.height; h++)
+      img.set(w, h, color(red(c), green(c), blue(c), blue(mask.get(w,h))));
+  return img;
+}

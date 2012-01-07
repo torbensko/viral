@@ -21,6 +21,7 @@ class User extends Entity {
     super(x, y, scale);
     users.add(this);
     browseRange = BROWSE_SIZE;
+    img = loadImage("user.png");
   }
   
   void preDraw() {
@@ -29,11 +30,6 @@ class User extends Entity {
       strokeWeight(BROSWE_LINE_WEIGHT);
       line(x, y, browsing.x, browsing.y);
     }
-  }
-  
-  void draw() {
-    super.draw();
-    ellipse(x, y, size*scale, size*scale);
   }
   
   void remove() {

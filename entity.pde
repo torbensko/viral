@@ -17,6 +17,7 @@ class Entity {
   ArrayList<Item> items;
   ArrayList<Item> pastItems;
   ArrayList<Item> pendingItems;
+  PImage img;
   
   int x;
   int y;
@@ -108,14 +109,30 @@ class Entity {
   // for bottom level elements
   void preDraw() {}
   
+  private float pastStrength = -1;
+  private PImage genImg = null;
+  
   // for second level elements
   void draw() {
     if(mousePressed && (youtube == null || project == null || researcher == null || server == null))
       stroke(127);
     else
       noStroke();
-    activeColour = whiten(colour, 1 - getStrength());
+    
+    float strength = getStrength();
+    
+    if(strength != pastStrength) {
+      activeColour = whiten(colour, 1 - strength);
+      if(img != null)
+        genImg = generateImage(activeColour, img);
+      pastStrength = strength;
+    }
     fill(activeColour);
+    
+    if(genImg != null)
+      image(genImg, x, y, size, size);
+    else
+      ellipse(x, y, size*scale, size*scale);
   }
   
   void postDraw() {}
