@@ -4,10 +4,15 @@ final int ACTIVE_INNER = 100;
 final int ACTIVE_RANGE = 200;
 
 // time based:
-final int OCCASSIONAL_THINK_PERIOD_MIN = 1 * FPS; // 1000;
-final int OCCASSIONAL_THINK_PERIOD_MAX = 4 * FPS; // 4000;
+//final int OCCASSIONAL_THINK_PERIOD_MIN = 1000;
+//final int OCCASSIONAL_THINK_PERIOD_MAX = 4000;
+//final float REARRANGE_DURATION = 200; // in millis
 
-final float REARRANGE_DURATION = 200; // in millis
+// time based:
+final int OCCASSIONAL_THINK_PERIOD_MIN = 1 * FPS;
+final int OCCASSIONAL_THINK_PERIOD_MAX = 4 * FPS;
+final int REARRANGE_DURATION = floor(0.2 * FPS); // in millis
+
 
 static ArrayList<Entity> entities = new ArrayList<Entity>();
 

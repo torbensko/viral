@@ -3,7 +3,10 @@ import java.util.ArrayList;
 final int ITEM_LINK_LINE_WEIGHT = 1;
 final float ITEM_LINK_LINE_WHITENESS = 0.7;
 
-final float TRANSFER_TIME_DEFAULT = 1000;
+// time based:
+//final float TRANSFER_TIME_DEFAULT = 1000;
+// frame based:
+final int TRANSFER_TIME_DEFAULT = 1 * FPS;
 
 
 static ArrayList<Item> items = new ArrayList<Item>();
@@ -16,7 +19,10 @@ class Item extends Entity {
   
   final int NOT_MOVING = -1;
   
-  float startTime = NOT_MOVING;
+  // time based
+  //float startTime = NOT_MOVING;
+  // frame based
+  int startTime = NOT_MOVING;
   int xInit;
   int yInit;
   int xDest;
@@ -36,7 +42,6 @@ class Item extends Entity {
     privatelyActive = true;
     links = new ArrayList<Site>();
     holders = new ArrayList<Entity>();
-    duration = TRANSFER_TIME_DEFAULT;
   }
   
   Item clone() {
@@ -57,24 +62,26 @@ class Item extends Entity {
     sendTo(receiver, null, 0);
   }
   
-  void sendTo(Entity receiver, Entity sender, float duration) {
+  void sendTo(Entity receiver, Entity sender, int duration) {
     moveTo(receiver.x, receiver.y, receiver, sender, duration);
   }
   
   // Tell it to move somewhere over a certain period and receiver the receiver
   // when there
-  void moveTo(int x, int y, Entity receiver, Entity sender, float duration) {
+  void moveTo(int x, int y, Entity receiver, Entity sender, int duration) {
     xInit = this.x;
     yInit = this.y;
     xDest = x;
     yDest = y;
     this.sender = sender;
-    if(duration > 0)
-      this.duration = duration;
+    this.duration = (duration > 0) ? duration : TRANSFER_TIME_DEFAULT;
     this.receiver = receiver;
     if(receiver != null)
       receiver.pendingItem(this); // let them know we are coming
-    startTime = millis();
+    // time based:
+    //startTime = millis();
+    // frame based:
+    startTime = frameCount;
   }
   
   void moveTo(int x, int y) {
@@ -83,7 +90,10 @@ class Item extends Entity {
   
   void think() {
     if(startTime != NOT_MOVING) {
-      float progress = clamp((millis() - startTime) / duration);
+      // time based:
+      //float progress = clamp((millis() - startTime) / duration);
+      // frame based:
+      float progress = (frameCount - startTime) / duration;
       if(progress == 1) {
         x = xDest;
         y = yDest;

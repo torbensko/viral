@@ -12,7 +12,6 @@ final char KEY_PUBLISH_VIDEO = 'v';
 
 final int FPS = 25;
 final float SCALE = 0.5;
-final float SPEED = 1;
 
 //MovieMaker record; // allows us to record the sequence
 boolean recording = false;
@@ -35,6 +34,7 @@ void setup() {
   // we use the frame to help with the layout process
   background(255);
   fill(0);
+  frameRate(FPS);
 }
 
 // We set the canvas to white and then as we find a good spot, we fill it in with some black.
