@@ -23,3 +23,15 @@ color whiten(color colour, float amount) {
   return color(red(colour) + white, green(colour) + white, blue(colour) + white);
 }
 
+String bufferNumber(int n, int size) {
+  String s = repeatString("0", size) + n;
+  return s.substring(s.length()-size, s.length());
+}
+
+String repeatString(String str, int n) {
+  String s = "";
+  for(int i = 0; i < n; i++)
+    s += str;
+  return s;
+}
+

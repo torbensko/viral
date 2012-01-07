@@ -1,7 +1,16 @@
+//import processing.video.*;
+
 final int SEPERATION = 90;
 final float SCALE = 1;
 
 final int SITE_USER_RATIO = 3; // i.e. SITE_USER_RATIO users to every site
+
+final char KEY_RECORDING_START = 'r';
+final char KEY_RECORDING_FINISH = ' ';
+
+//MovieMaker record; // allows us to record the sequence
+boolean recording = false;
+String recordPrefix = "";
 
 void setup() {
   size(800, 800);
@@ -18,6 +27,16 @@ void setup() {
   // setup the project
   researcher.publishSystem();
   researcher.publishVideo();
+  
+  Calendar now = Calendar.getInstance();
+  recordPrefix = ""+
+      now.get(Calendar.YEAR)+"-"+
+      bufferNumber(now.get(Calendar.MONTH)+1, 2)+"-"+
+      bufferNumber(now.get(Calendar.DAY_OF_MONTH), 2)+"_"+
+      bufferNumber(now.get(Calendar.HOUR_OF_DAY), 2)+"-"+
+      bufferNumber(now.get(Calendar.MINUTE), 2)+"/";
+  
+  //record = new MovieMaker(this, width, height, "test.mov", 30, MovieMaker.H263, MovieMaker.HIGH);
 }
 
 // Sccatter the nodes around randomly, without placing any two too near to each other
@@ -57,6 +76,20 @@ void draw() {
   for(Entity e : clone)  e.preDraw();
   for(Entity e : clone)  e.draw();
   for(Entity e : clone)  e.postDraw();
+  
+  if(recording) {
+    //record.addFrame();
+    save("capture/"+recordPrefix+bufferNumber(frameCount, 6)+".png");
+  }
+}
+
+void keyPressed() {
+  if(key == KEY_RECORDING_START) {
+    recording = true;
+  } else if(key == KEY_RECORDING_FINISH) {
+    recording = false;
+    //record.finish();  // Finish the movie if space bar is pressed!
+  }
 }
 
 void mouseClicked() {
