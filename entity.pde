@@ -81,6 +81,7 @@ class Entity {
   private float strengthDiff = 0;
   private float strengthTime = 0; // offset them from each other
   private float strengthPrev = 0;
+  ArrayList<Entity> nearbyEntities;
   
   float getStrength() {
     if(isActive || privatelyActive)
@@ -89,19 +90,29 @@ class Entity {
     strengthDiff += millis() - strengthTime;
     strengthTime  = millis();
     
-    if(strengthDiff < ACTIVE_PERIOD_CHECK)
+    if(strengthDiff < ACTIVE_PERIOD_CHECK || nearbyEntities == null)
       return strengthPrev;
     
     strengthDiff = 0;
     
     float smallest = 10000000;
-    for(Entity e : entities)
+    for(Entity e : nearbyEntities)
       smallest = (e == this || !e.isActive) 
           ? smallest
           : min(smallest, e.distance(this));
     
-    strengthPrev = 1 - clamp((smallest - ACTIVE_INNER) / ACTIVE_RANGE);
+    strengthPrev = 1 - clamp((smallest - ACTIVE_INNER * SCALE) / ACTIVE_RANGE * SCALE);
     return strengthPrev;
+  }
+  
+  void setup() {
+    // make a subset to check when updating our stength
+    nearbyEntities = new ArrayList<Entity>();
+    for(Entity e : entities) {
+      float d = distance(e);
+      if(d < (ACTIVE_INNER + ACTIVE_RANGE) * SCALE)
+        nearbyEntities.add(e);
+    }
   }
   
   // for bottom level elements

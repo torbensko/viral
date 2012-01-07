@@ -89,10 +89,12 @@ void setupKeyPlayers() {
   makeYouTube(sites.get(0));
   makeServer(sites.get(0));
   makeProjectSite(sites.get(0));
-    
+  
   // we need the users to consider which are good websites to check
   for(User u : (ArrayList<User>) users.clone())
     u.resetBrowsing();
+  for(Entity u : (ArrayList<Entity>) entities.clone())
+    u.setup();
 }
 
 void keyPressed() {
