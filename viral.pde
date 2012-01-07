@@ -7,7 +7,8 @@ final int SITE_USER_RATIO = 5; // i.e. SITE_USER_RATIO users to every site
 final char KEY_RECORDING_START = 'r';
 final char KEY_RECORDING_FINISH = ' ';
 final char KEY_AUTOSETUP = 'k';
-final char KEY_START_SEQENCE = 'l';
+final char KEY_PUBLISH_SYSTEM = 's';
+final char KEY_PUBLISH_VIDEO = 'v';
 
 //MovieMaker record; // allows us to record the sequence
 boolean recording = false;
@@ -88,11 +89,10 @@ void setupKeyPlayers() {
   makeYouTube(sites.get(0));
   makeServer(sites.get(0));
   makeProjectSite(sites.get(0));
-}
-  
-void startSequence() {
-  researcher.publishSystem();
-  researcher.publishVideo();
+    
+  // we need the users to consider which are good websites to check
+  for(User u : (ArrayList<User>) users.clone())
+    u.resetBrowsing();
 }
 
 void keyPressed() {
@@ -106,8 +106,13 @@ void keyPressed() {
     case KEY_AUTOSETUP :
       setupKeyPlayers();
       break;
-    case KEY_START_SEQENCE :
-      startSequence();
+    case KEY_PUBLISH_SYSTEM :
+      if(researcher != null)
+        researcher.publishSystem();
+      break;
+    case KEY_PUBLISH_VIDEO :
+      if(researcher != null)
+        researcher.publishVideo();
       break;
   }
 }

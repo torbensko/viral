@@ -1,6 +1,5 @@
 import java.util.ArrayList;
 
-final int SERVER_GROW_CHANCE = 4;
 final int SERVER_GROW_AMOUNT = 2;
 
 final int FOLLOWABLE_STROKE_WEIGHT = 3;
@@ -26,7 +25,7 @@ class Site extends Entity {
   Site(int x, int y) {
     super(x, y);
     sites.add(this);
-    size = 50;
+    size = floor(50 * SCALE);
     colour = #AAFFBB;
     followers = new ArrayList<User>();
   }
@@ -47,7 +46,7 @@ class Site extends Entity {
   
   void preDraw() {
     for(User u : (ArrayList<User>) followers.clone()) {
-      strokeWeight(FOLLOWABLE_STROKE_WEIGHT);
+      strokeWeight(max(1, FOLLOWABLE_STROKE_WEIGHT * SCALE));
       stroke(FOLLOWABLE_COLOR);
       line(x, y, u.x, u.y);
     }
@@ -56,7 +55,7 @@ class Site extends Entity {
   void draw() {
     if(followable) {
       stroke(FOLLOWABLE_COLOR);
-      strokeWeight(FOLLOWABLE_STROKE_WEIGHT);
+      strokeWeight(max(1, FOLLOWABLE_STROKE_WEIGHT * SCALE));
     }
     super.draw();
   }
@@ -81,7 +80,7 @@ class YouTube extends Site {
     super(x, y);
     youtube = this;
     colour = #FF0000;
-    size = 55;
+    size = floor(55 * SCALE);
     isActive = true;
     followable = true;
   }
@@ -108,7 +107,7 @@ class ProjectSite extends Site {
     super(x, y);
     project = this;
     colour = #0000FF;
-    size = 55;
+    size = floor(55 * SCALE);
     isActive = true;
     browsable = false;
   }
@@ -125,19 +124,28 @@ class ProjectSite extends Site {
 
 class Server extends Site {
 
+  int growChance = 1;
+  
   Server(int x, int y) {
     super(x, y);
     server = this;
     colour = #333333;
-    size = 20;
+    size = floor(20 * SCALE);
     browsable = false;
     privatelyActive = true;
   }
   
   void acceptItem(Item i) {
     i.remove();
-    if(floor(random(SERVER_GROW_CHANCE)) % SERVER_GROW_CHANCE == 0)
-      size += SERVER_GROW_AMOUNT;
+    if(floor(random(growChance)) % growChance == 0) {
+      size += max(1, floor(SERVER_GROW_AMOUNT * SCALE));
+      growChance++;
+    }
+  }
+  
+  // ensures we never get sent stuff other than what researcher gives us
+  boolean holdsItem(Item i, boolean includePast, boolean includePending) {
+    return true;
   }
   
   // do not want to discard anything

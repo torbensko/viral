@@ -16,18 +16,19 @@ class User extends Entity {
   
   Site browsing;
   int browseRange;
+  ArrayList<Site> nearbySites;
   
   User(int x, int y) {
     super(x, y);
     users.add(this);
-    browseRange = BROWSE_SIZE;
+    browseRange = floor(BROWSE_SIZE * SCALE);
     img = loadImage("user.png");
   }
   
   void preDraw() {
     if(browsing != null) {
       stroke(activeColour);
-      strokeWeight(BROSWE_LINE_WEIGHT);
+      strokeWeight(max(1, BROSWE_LINE_WEIGHT * SCALE));
       line(x, y, browsing.x, browsing.y);
     }
   }
@@ -37,17 +38,24 @@ class User extends Entity {
     users.remove(this);
   }
   
+  void resetBrowsing() {
+    nearbySites = null;
+    browsing = null;
+  }
+  
   // Pick a random nearby site to visit
   // @return   Returns TRUE if it is a different site from before
   boolean browse() {
     Site previously = browsing;
-    ArrayList<Site> possible = new ArrayList<Site>();
-    for(Site s : sites) {
-      if(s.browsable && s.distance(this) < browseRange)
-        possible.add(s);
+    if(nearbySites == null) {
+      nearbySites = new ArrayList<Site>();
+      for(Site s : sites) {
+        if(s.browsable && s.distance(this) < browseRange)
+          nearbySites.add(s);
+      }
     }
-    if(possible.size() > 0)
-      browsing = possible.get(floor(random(possible.size())));
+    if(nearbySites.size() > 0)
+      browsing = nearbySites.get(floor(random(nearbySites.size())));
     return previously != browsing;
   }
 }
@@ -68,7 +76,7 @@ class Researcher extends User {
     researcher = this;
     isActive = true;
     colour = #FF00CC;
-    size = 40;
+    size = floor(40 * SCALE);
   }
   
   boolean containsClick() {
@@ -89,7 +97,9 @@ class Researcher extends User {
   void publishSystem() {
     if(project != null && server != null) {
       browsing = project;
-      new System(x, y, null).clone().sendTo(project);
+      System system = new System(x, y, null);
+      super.acceptItem(system);
+      system.clone().sendTo(project);
       
       state = STATE_CREATING_VIDEO;
     }
@@ -102,6 +112,7 @@ class Researcher extends User {
       Item i = new Item(x, y, null);
       i.links.add(project);
       i.sendTo(youtube);
+      
       state = STATE_WAITING_FOR_YT;
     }
   }
@@ -118,8 +129,12 @@ class Researcher extends User {
     boolean promoted = false;
     do {
       // every time, we look a litte further
-      browseRange += BROWSE_INCREASE;
+      browseRange += floor(BROWSE_INCREASE * SCALE);
+      
+      // force it to search for sites
+      nearbySites = null;
       browse();
+      
       if(!browsing.holdsItem(currentVideo)) {
         currentVideo.clone().sendTo(browsing);
         promoted = true;
@@ -141,7 +156,7 @@ class Surfer extends User {
   Surfer(int x, int y) {
     super(x, y); 
     colour = #99DDFF;
-    size = 30;
+    size = floor(30 * SCALE);
     watching = new ArrayList<YouTubeVid>();
   }
   

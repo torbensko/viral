@@ -25,7 +25,7 @@ class Entity {
   protected boolean privatelyActive; // so only we know we are active
   color colour = #666666;
   color activeColour;
-  int size = 10;
+  int size = floor(10 * SCALE);
   
   Entity(int x, int y) {
     items = new ArrayList<Item>();
@@ -130,7 +130,7 @@ class Entity {
     if(genImg != null)
       image(genImg, x, y, size, size);
     else
-      ellipse(x, y, size * SCALE, size * SCALE);
+      ellipse(x, y, size, size);
   }
   
   void postDraw() {}
@@ -176,7 +176,10 @@ class Entity {
     for(int i = 0; i < items.size(); i++) {
       float rad = 2 * PI / items.size() * i;
       Item it = items.get(i);
-      it.moveTo((int) (it.size * sin(rad) + x), (int) (it.size * cos(rad) + it.y), null, null, REARRANGE_DURATION);
+      it.moveTo(
+          (int) (it.size * sin(rad) + x), 
+          (int) (it.size * cos(rad) + y), 
+          null, null, REARRANGE_DURATION);
     }
   }
   

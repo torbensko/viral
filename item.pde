@@ -31,7 +31,7 @@ class Item extends Entity {
     super(x, y);
     this.master = master;
     colour = #BBCCFF;
-    size = 10;
+    size = floor(10 * SCALE);
     items.add(this);
     privatelyActive = true;
     links = new ArrayList<Site>();
@@ -105,7 +105,7 @@ class Item extends Entity {
       return;
     
     // draw the links to the other sites
-    strokeWeight(ITEM_LINK_LINE_WEIGHT);
+    strokeWeight(max(1, ITEM_LINK_LINE_WEIGHT * SCALE));
     for(Site s : links) {
       stroke(whiten(s.colour, ITEM_LINK_LINE_WHITENESS));
       // we draw the second half in the third pass
@@ -120,7 +120,7 @@ class Item extends Entity {
       return;
     
     // we draw the second half now so it overlaps the site this item may be sitting on
-    strokeWeight(ITEM_LINK_LINE_WEIGHT);
+    strokeWeight(max(1, ITEM_LINK_LINE_WEIGHT * SCALE));
     for(Site s : links) {
       stroke(whiten(s.colour, ITEM_LINK_LINE_WHITENESS));
       line(x, y, lerp(x, s.x, 0.2), lerp(y, s.y, 0.2));
@@ -128,7 +128,7 @@ class Item extends Entity {
     
     fill(colour);
     noStroke();
-    ellipse(x, y, size * SCALE, size * SCALE);
+    ellipse(x, y, size, size);
   }
   
   void remove() {
@@ -185,7 +185,7 @@ class Data extends Item {
   
   Data(int x, int y, Item master) {
     super(x, y, master);
-    size = 5;
+    size = floor(5 * SCALE);
     if(server != null)
       colour = server.colour;
   }
