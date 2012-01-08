@@ -38,6 +38,7 @@ class Entity {
   String label = "";
   int fontSize = 12;
   int strengthUpdateOffset = 0;
+  int appeal = 1;
   
   Entity(int x, int y) {
     items = new ArrayList<Item>();

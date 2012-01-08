@@ -12,6 +12,8 @@ final int FOLLOWING_CHANCE = 5;
 
 final float TRANSFER_TIME_INIT_YOUTUBE_UPLOAD = 2000;
 
+final int BROWSE_AMOUNT = 5; // in one out of BROWSE_AMOUNT cases, we won't browse
+
 PImage userIcon;
 
 class User extends Entity {
@@ -55,7 +57,8 @@ class User extends Entity {
       nearbySites = new ArrayList<Site>();
       for(Site s : sites) {
         if(s.browsable && s.distance(this) < browseRange)
-          nearbySites.add(s);
+          for(int i = 0; i < s.appeal; i++)
+            nearbySites.add(s);
       }
     }
     if(nearbySites.size() > 0)
@@ -188,15 +191,19 @@ class Surfer extends User {
   // to promote the items they currently hold and discard them, based on
   // the appeal and sharablity of each item
   void occassionalThink() {
-    browse();
-    checkLink(browsing);
-    
     // if we still have the system, then give it a play
     if(items.indexOf(system) < 0)
       system = null;
     if(system != null)
       system.use(); // occassionally think to play the game
-
+      
+    browsing = null;
+    if(!randChoice(BROWSE_AMOUNT))
+      browse();
+    if(browsing == null)
+      return;
+      
+    checkLink(browsing);
     considerReposting();
     considerDiscarding();
   }

@@ -25,6 +25,7 @@ class Site extends Entity {
     size = floor(50 * SCALE);
     colour = #AAFFBB;
     followers = new ArrayList<User>();
+    appeal = 5;
   }
   
   void acceptItem(Item i) {
@@ -116,6 +117,8 @@ class ProjectSite extends Site {
     label = "Project Site";
     fontSize = 12;
     linkVisibility = 0.05;
+    followChance = 5;
+    appeal = 1;
   }
   
   void acceptItem(Item i) {

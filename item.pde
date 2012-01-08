@@ -16,7 +16,6 @@ class Item extends Entity {
   ArrayList<Site> links;
   ArrayList<Entity> holders;
 
-  int appeal = 1;
   int sharability = 1;
 
   final int NOT_MOVING = -1;
