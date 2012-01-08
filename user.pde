@@ -4,7 +4,7 @@ static ArrayList<User> users = new ArrayList<User>();
 static ArrayList<Surfer> surfers = new ArrayList<Surfer>();
 static Researcher researcher;
 
-final int BROWSE_SIZE = 200;
+final int BROWSE_SIZE = 300;
 final int BROWSE_INCREASE = 10;
 final int BROSWE_LINE_WEIGHT = 2;
 
@@ -154,6 +154,9 @@ class Researcher extends User {
   
   // Finds a new site and sends the latest video to it
   void promoteVideo() {
+    if(currentVideo == null)
+      return;
+    
     boolean promoted = false;
     do {
       browse();

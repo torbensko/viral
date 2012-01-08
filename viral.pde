@@ -1,7 +1,7 @@
 //import processing.video.*;
 
-final int SEPERATION_NORM = 120;
-final int SEPERATION_USER = 60;
+final int SEPERATION_NORM = 140;
+final int SEPERATION_USER = 50;
 final int SITE_USER_RATIO = 5; // i.e. SITE_USER_RATIO users to every site
 
 final char KEY_RECORDING_START = 'r';
@@ -9,10 +9,12 @@ final char KEY_RECORDING_FINISH = ' ';
 final char KEY_AUTOSETUP = 'k';
 final char KEY_PUBLISH_SYSTEM = 's';
 final char KEY_PUBLISH_VIDEO = 'v';
+final char KEY_PROMOTE = 'p';
 final char KEY_POST_TO_FORUM = 'f';
+final char KEY_ALL_ACTIVE = 'a';
 
 final int FPS = 25;
-final float SCALE = 1.5;
+final float SCALE = 1.2;
 
 //MovieMaker record; // allows us to record the sequence
 boolean recording = false;
@@ -125,7 +127,19 @@ void keyPressed() {
       if(researcher != null)
         researcher.sendForumPost();
       break;
+    case KEY_PROMOTE :
+      if(researcher != null)
+        researcher.promoteVideo();
+      break;
+    case KEY_ALL_ACTIVE:
+      makeAllActive();
+      break;
   }
+}
+
+void makeAllActive() {
+  for(Entity s : entities)
+    s.isActive = true;
 }
 
 void mouseClicked() {
