@@ -141,6 +141,10 @@ class Entity {
         genImg = generateImage(activeColour, img);
       pastStrength = strength;
     }
+
+    if(genImg == null && img != null)
+      genImg = generateImage(activeColour, img);
+    
     fill(activeColour);
     
     if(genImg != null)

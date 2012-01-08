@@ -12,7 +12,7 @@ final char KEY_PUBLISH_VIDEO = 'v';
 final char KEY_POST_TO_FORUM = 'f';
 
 final int FPS = 25;
-final float SCALE = 1;
+final float SCALE = 2;
 
 //MovieMaker record; // allows us to record the sequence
 boolean recording = false;

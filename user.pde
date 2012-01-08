@@ -124,11 +124,15 @@ class Researcher extends User {
   }
   
   void sendForumPost() {
-    browse();
+    
     if(currentEmail == null) {
       currentEmail = new Email(x, y, null);
       super.acceptItem(currentEmail);
     }
+    do {
+      browse();
+    } while (browsing == null || (browsing != null && browsing.holdsItem(currentEmail, true, true)));
+    
     currentEmail.clone().sendTo(browsing);
   }
   
@@ -143,11 +147,6 @@ class Researcher extends User {
   void promoteVideo() {
     boolean promoted = false;
     do {
-      // every time, we look a litte further
-      browseRange += floor(BROWSE_INCREASE * SCALE);
-      
-      // force it to search for sites
-      nearbySites = null;
       browse();
       
       if(!browsing.holdsItem(currentVideo)) {
@@ -155,6 +154,12 @@ class Researcher extends User {
         promoted = true;
       }
     } while(!promoted);
+  }
+  
+  boolean browse() {
+    browseRange += floor(BROWSE_INCREASE * SCALE);
+    nearbySites = null;
+    return super.browse();
   }
   
   void occassionalThink() {

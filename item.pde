@@ -56,8 +56,13 @@ class Item extends Entity {
     y = i.y;
     master = (i.master != null) ? i.master : i;
     links = (ArrayList<Site>) i.links.clone();
+    holders = (ArrayList<Entity>) i.holders.clone();
     colour = i.colour;
     size = i.size;
+    img = i.img;
+    appeal = i.appeal;
+    sharability = i.sharability;
+    
     return this;
   }
 
@@ -143,7 +148,11 @@ class Item extends Entity {
 
     fill(colour);
     noStroke();
-    ellipse(x, y, size, size);
+    
+    if(img != null)
+      image(img, x, y, size, size);
+    else
+      ellipse(x, y, size, size);
   }
 
   void remove() {
@@ -189,17 +198,19 @@ class YouTubeVid extends Item {
   }
 }
 
-PImage emailIcon = loadImage("mail.png");
+PImage emailIcon;
 
 class Email extends Item {
 
   Email(int x, int y, Item master) {
     super(x, y, master);
-    img = emailIcon;
     colour = #5AD4D6;
+    if(emailIcon == null)
+      emailIcon = generateImage(colour, loadImage("mail.png"));
+    img = emailIcon;
     links.add(project);
     appeal = 2;
-    sharability = 5;
+    sharability = 10;
   }
 
   Email clone() {
