@@ -71,6 +71,8 @@ class YouTube extends Site {
     size = floor(55 * SCALE);
     isActive = true;
     followChance = 2;
+    label = "YouTube";
+    fontSize = 16;
   }
   
   void acceptItem(Item i) {
@@ -111,6 +113,8 @@ class ProjectSite extends Site {
     size = floor(55 * SCALE);
     isActive = true;
     browsable = false;
+    label = "Project Site";
+    fontSize = 12;
   }
   
   void acceptItem(Item i) {
@@ -134,6 +138,8 @@ class Server extends Site {
     size = floor(20 * SCALE);
     browsable = false;
     privatelyActive = true;
+    label = "Data Server";
+    fontSize = 8;
   }
   
   void acceptItem(Item i) {

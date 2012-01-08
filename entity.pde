@@ -1,4 +1,5 @@
 import java.util.ArrayList;
+import java.util.HashMap;
 
 final int ACTIVE_INNER = 100;
 final int ACTIVE_RANGE = 200;
@@ -13,6 +14,7 @@ final int OCCASSIONAL_THINK_PERIOD_MIN = 1 * FPS;
 final int OCCASSIONAL_THINK_PERIOD_RANGE = 2 * FPS;
 final int REARRANGE_DURATION = floor(0.2 * FPS); // in millis
 
+HashMap<Integer,PFont> fonts;
 
 static ArrayList<Entity> entities = new ArrayList<Entity>();
 
@@ -31,6 +33,8 @@ class Entity {
   color activeColour;
   int size = floor(10 * SCALE);
   float strength = 0;
+  String label = "";
+  int fontSize = 12;
   
   Entity(int x, int y) {
     items = new ArrayList<Item>();
@@ -39,6 +43,9 @@ class Entity {
     entities.add(this);
     this.x = x; 
     this.y = y;
+    
+    if(fonts == null)
+      fonts = new HashMap<Integer,PFont>();
   }
   
   void pendingItem(Item i) {
@@ -151,6 +158,22 @@ class Entity {
       image(genImg, x, y, size, size);
     else
       ellipse(x, y, size, size);
+    drawLabel();
+  }
+  
+  void drawLabel() {
+    if(label.length() == 0)
+      return;
+    
+    PFont font = fonts.get(fontSize);
+    if(font == null) {
+      font = createFont("Arial", fontSize * SCALE);
+      fonts.put(fontSize, font);
+    }
+    
+    textFont(font);
+    textAlign(CENTER);
+    text(label, x, y-(size*0.55));
   }
   
   void postDraw() {}

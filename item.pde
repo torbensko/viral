@@ -62,6 +62,8 @@ class Item extends Entity {
     img = i.img;
     appeal = i.appeal;
     sharability = i.sharability;
+    label = i.label;
+    fontSize = i.fontSize;
     
     return this;
   }
