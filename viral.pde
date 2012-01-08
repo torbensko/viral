@@ -9,9 +9,10 @@ final char KEY_RECORDING_FINISH = ' ';
 final char KEY_AUTOSETUP = 'k';
 final char KEY_PUBLISH_SYSTEM = 's';
 final char KEY_PUBLISH_VIDEO = 'v';
+final char KEY_POST_TO_FORUM = 'f';
 
 final int FPS = 25;
-final float SCALE = 0.5;
+final float SCALE = 1;
 
 //MovieMaker record; // allows us to record the sequence
 boolean recording = false;
@@ -52,7 +53,7 @@ boolean placeAnElement() {
       placed = true;
   }
   if(placed) {
-    boolean createUser = floor(random(SITE_USER_RATIO)) % SITE_USER_RATIO != 0;
+    boolean createUser = randInt(SITE_USER_RATIO) % SITE_USER_RATIO != 0;
     Entity entity = createUser
         ? new Surfer(x, y)
         : new Site(x, y);
@@ -119,6 +120,10 @@ void keyPressed() {
     case KEY_PUBLISH_VIDEO :
       if(researcher != null)
         researcher.publishVideo();
+      break;
+    case KEY_POST_TO_FORUM :
+      if(researcher != null)
+        researcher.sendForumPost();
       break;
   }
 }

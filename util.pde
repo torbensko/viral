@@ -37,3 +37,11 @@ PImage generateImage(color c, PImage mask) {
       img.set(w, h, color(red(c), green(c), blue(c), blue(mask.get(w,h))));
   return img;
 }
+
+int randInt(float val) {
+  return floor(random(val));
+}
+
+boolean randChoice(int odds) {
+  return (odds < 1) ? false : randInt(odds) % odds == 0;
+}

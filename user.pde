@@ -12,6 +12,8 @@ final int FOLLOWING_CHANCE = 5;
 
 final float TRANSFER_TIME_INIT_YOUTUBE_UPLOAD = 2000;
 
+PImage userIcon;
+
 class User extends Entity {
   
   Site browsing;
@@ -22,7 +24,9 @@ class User extends Entity {
     super(x, y);
     users.add(this);
     browseRange = floor(BROWSE_SIZE * SCALE);
-    img = loadImage("user.png");
+    if(userIcon == null)
+       userIcon = loadImage("user.png");
+    img = userIcon;
   }
   
   void preDraw() {
@@ -55,7 +59,7 @@ class User extends Entity {
       }
     }
     if(nearbySites.size() > 0)
-      browsing = nearbySites.get(floor(random(nearbySites.size())));
+      browsing = nearbySites.get(randInt(nearbySites.size()));
     return previously != browsing;
   }
 }
@@ -70,6 +74,7 @@ class Researcher extends User {
   int state = STATE_INIT;
   
   Item currentVideo;
+  Item currentEmail;
   
   Researcher(int x, int y) {
     super(x, y);
@@ -101,6 +106,7 @@ class Researcher extends User {
       super.acceptItem(system);
       system.clone().sendTo(project);
       
+      currentEmail = null;
       state = STATE_CREATING_VIDEO;
     }
   }
@@ -109,12 +115,21 @@ class Researcher extends User {
   void publishVideo() {
     if(youtube != null && project != null) {
       browsing = youtube;
-      Item i = new Item(x, y, null);
+      Item i = new VideoFile(x, y, null);
       i.links.add(project);
       i.sendTo(youtube);
       
       state = STATE_WAITING_FOR_YT;
     }
+  }
+  
+  void sendForumPost() {
+    browse();
+    if(currentEmail == null) {
+      currentEmail = new Email(x, y, null);
+      super.acceptItem(currentEmail);
+    }
+    currentEmail.clone().sendTo(browsing);
   }
   
   void acceptItem(Item i) {
@@ -151,28 +166,34 @@ class Surfer extends User {
   
   Item waitingFor;
   System system;
-  ArrayList<YouTubeVid> watching;
   
   Surfer(int x, int y) {
     super(x, y); 
     colour = #99DDFF;
     size = floor(30 * SCALE);
-    watching = new ArrayList<YouTubeVid>();
   }
   
+  // A surfer, at any given time will randomly choose
+  // to promote the items they currently hold and discard them, based on
+  // the appeal and sharablity of each item
   void occassionalThink() {
     browse();
     checkLink(browsing);
     
+    // if we still have the system, then give it a play
+    if(items.indexOf(system) < 0)
+      system = null;
     if(system != null)
       system.use(); // occassionally think to play the game
-    
-    if(watching.size() > 0) {
-      for(YouTubeVid v : (ArrayList<YouTubeVid>) watching)
-        discardItem(v);
-      watching.clear();
-    }
-    
+
+    considerReposting();
+    considerDiscarding();
+  }
+  
+  void considerReposting() {
+    for(Item i : (ArrayList<Item>) items.clone())
+      if(randChoice(i.sharability) && !browsing.holdsItem(i))
+        i.clone().sendTo(browsing);
   }
   
   void acceptItem(Item i) {
@@ -184,20 +205,11 @@ class Surfer extends User {
     if(i instanceof System)
       system = (System) i;
     
-    if(i instanceof YouTubeVid) {
-      watching.add((YouTubeVid) i);
-      
-      // repost this to another site
-      browse();
-      if(!browsing.holdsItem(i))
-        i.clone().sendTo(browsing);
-    }
-    
     for(Site s : (ArrayList<Site>) i.links.clone()) {
       checkLink(s);
       
       // consider following the site
-      if(s.followable && floor(random(FOLLOWING_CHANCE)) % FOLLOWING_CHANCE == 0)
+      if(randChoice(s.followChance))
         s.followers.add(this);
     }
   }

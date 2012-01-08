@@ -10,7 +10,7 @@ final int ACTIVE_RANGE = 200;
 
 // time based:
 final int OCCASSIONAL_THINK_PERIOD_MIN = 1 * FPS;
-final int OCCASSIONAL_THINK_PERIOD_MAX = 4 * FPS;
+final int OCCASSIONAL_THINK_PERIOD_RANGE = 2 * FPS;
 final int REARRANGE_DURATION = floor(0.2 * FPS); // in millis
 
 
@@ -81,7 +81,7 @@ class Entity {
     thinkDiff--;
     
     if(thinkDiff < 0) {
-      thinkDiff = floor(random(OCCASSIONAL_THINK_PERIOD_MIN, OCCASSIONAL_THINK_PERIOD_MAX));
+      thinkDiff = OCCASSIONAL_THINK_PERIOD_MIN + randInt(OCCASSIONAL_THINK_PERIOD_RANGE);
       occassionalThink();
       updateStrength();
     }
@@ -196,6 +196,14 @@ class Entity {
           (int) (it.size * sin(rad) + x), 
           (int) (it.size * cos(rad) + y), 
           null, null, REARRANGE_DURATION);
+    }
+  }
+  
+  void considerDiscarding() {
+    // drop some of the material after a while
+    for(Item i : (ArrayList<Item>) items.clone()) {
+      if(randChoice(i.appeal))
+        discardItem(i);
     }
   }
   

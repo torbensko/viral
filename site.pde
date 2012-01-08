@@ -5,9 +5,6 @@ final int SERVER_GROW_AMOUNT = 2;
 final int FOLLOWABLE_STROKE_WEIGHT = 3;
 final color FOLLOWABLE_COLOR = #FFAA11;
 
-final int DISCARD_CHANCE_VID = 5;    // 1 in DISCARD_CHANCE_VID
-final int DISCARD_CHANCE_FORUM = 1;
-
 static ArrayList<Site> sites = new ArrayList<Site>();
 static YouTube youtube;
 static ProjectSite project;
@@ -16,8 +13,7 @@ static Server server;
 
 class Site extends Entity {
 
-  boolean followable;
-  color followableColor;
+  int followChance = 0;
   ArrayList<User> followers;
   
   boolean browsable = true;
@@ -53,7 +49,7 @@ class Site extends Entity {
   }
   
   void draw() {
-    if(followable) {
+    if(followChance > 0) {
       stroke(FOLLOWABLE_COLOR);
       strokeWeight(max(1, FOLLOWABLE_STROKE_WEIGHT * SCALE));
     }
@@ -62,14 +58,6 @@ class Site extends Entity {
   
   void occassionalThink() {
     considerDiscarding();
-  }
-  
-  void considerDiscarding() {
-    // drop some of the material after a while
-    for(Item i : (ArrayList<Item>) items.clone()) {
-      if(i instanceof YouTubeVid && floor(random(DISCARD_CHANCE_VID)) % DISCARD_CHANCE_VID == 0)
-        discardItem(i);
-    }
   }
 }
 
@@ -82,10 +70,15 @@ class YouTube extends Site {
     colour = #FF0000;
     size = floor(55 * SCALE);
     isActive = true;
-    followable = true;
+    followChance = 2;
   }
   
   void acceptItem(Item i) {
+    if(!(i instanceof VideoFile)) {
+      i.remove();
+      return;
+    }
+    
     // send back the youtube version (i.e. the one with links)
     Item ytv = new YouTubeVid(x, y, null);
     ytv.links.addAll(i.links);
@@ -94,6 +87,14 @@ class YouTube extends Site {
     i.remove();
     
     ytv.clone().sendTo(researcher);
+  }
+  
+  boolean holdsItem(Item i, boolean includePast, boolean includePending) {
+    // we do not want non-video files so we pretend we already possess everything else
+    if(!(i instanceof VideoFile))
+      return true;
+    
+    return super.holdsItem(i, includePast, includePending);
   }
   
   // do not want to discard anything
@@ -137,7 +138,7 @@ class Server extends Site {
   
   void acceptItem(Item i) {
     i.remove();
-    if(floor(random(growChance)) % growChance == 0) {
+    if(randChoice(growChance)) {
       size += max(1, floor(SERVER_GROW_AMOUNT * SCALE));
       growChance++;
     }
