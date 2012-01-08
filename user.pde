@@ -11,6 +11,7 @@ final int BROSWE_LINE_WEIGHT = 2;
 final int FOLLOWING_CHANCE = 5;
 
 final float TRANSFER_TIME_INIT_YOUTUBE_UPLOAD = 2000;
+final float DOWNLOAD_CHANCE_REDUCTION = 0.5;
 
 final int BROWSE_AMOUNT = 5; // in one out of BROWSE_AMOUNT cases, we won't browse
 
@@ -37,6 +38,7 @@ class User extends Entity {
       strokeWeight(max(1, BROSWE_LINE_WEIGHT * SCALE));
       line(x, y, browsing.x, browsing.y);
     }
+    noStroke();
   }
   
   void remove() {
@@ -244,10 +246,20 @@ class Surfer extends User {
     for(Item i : (ArrayList<Item>) link.items.clone()) {
       // found a new item that we are interested in
       if(!holdsItem(i)) {
-        waitingFor = i.clone();
-        waitingFor.sendTo(this);
-        privatelyActive = true;
-        break;
+        Item c = i.clone();
+        
+        // e.g. appeal = 8, DOWNLOAD_CHANCE_REDUCTION = 0.5
+        //      3/4 chance of downloading
+        if(!randChoice(i.appeal * DOWNLOAD_CHANCE_REDUCTION)) {
+          waitingFor = c;
+          waitingFor.sendTo(this);
+          privatelyActive = true;
+          break;
+          
+        } else {
+          // we decided we do not want it, either now or in the future
+          discardItem(c);
+        }
       }
     }
   }

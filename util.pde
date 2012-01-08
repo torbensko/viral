@@ -42,6 +42,11 @@ int randInt(float val) {
   return floor(random(val));
 }
 
+
+boolean randChoice(float odds) {
+  return randChoice((odds > 0) ? max(1, floor(odds)) : 0);
+}
+
 boolean randChoice(int odds) {
   return (odds < 1) ? false : randInt(odds) % odds == 0;
 }

@@ -4,6 +4,7 @@ final int SERVER_GROW_AMOUNT = 2;
 
 final int FOLLOWABLE_STROKE_WEIGHT = 3;
 final color FOLLOWABLE_COLOR = #FFAA11;
+final int FOLLOWABLE_VISIBILITY = 50;
 
 static ArrayList<Site> sites = new ArrayList<Site>();
 static YouTube youtube;
@@ -45,17 +46,19 @@ class Site extends Entity {
   void preDraw() {
     for(User u : (ArrayList<User>) followers.clone()) {
       strokeWeight(max(1, FOLLOWABLE_STROKE_WEIGHT * SCALE));
-      stroke(FOLLOWABLE_COLOR);
+      stroke(FOLLOWABLE_COLOR, FOLLOWABLE_VISIBILITY);
       line(x, y, u.x, u.y);
     }
+    noStroke();
   }
   
   void draw() {
     if(followChance > 0) {
-      stroke(FOLLOWABLE_COLOR);
       strokeWeight(max(1, FOLLOWABLE_STROKE_WEIGHT * SCALE));
+      stroke(FOLLOWABLE_COLOR, FOLLOWABLE_VISIBILITY);
     }
     super.draw();
+    noStroke();
   }
   
   void occassionalThink() {

@@ -145,10 +145,12 @@ class Entity {
   
   // for second level elements
   void draw() {
-    if(mousePressed && (youtube == null || project == null || researcher == null || server == null))
+    if(mousePressed && (youtube == null || project == null || researcher == null || server == null)) {
       stroke(127);
-    else
+      noFill();
+      ellipse(x, y, size, size);
       noStroke();
+    }
     
     if(strength != pastStrength) {
       activeColour = whiten(colour, 1 - strength);

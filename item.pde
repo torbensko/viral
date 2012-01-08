@@ -130,6 +130,7 @@ class Item extends Entity {
       // we draw the second half in the third pass
       line(lerp(x, s.x, 0.2), lerp(y, s.y, 0.2), s.x, s.y);
     }
+    noStroke();
   }
 
   void draw() {
@@ -145,9 +146,9 @@ class Item extends Entity {
       stroke(s.colour, s.linkVisibility*255); //whiten(s.colour, s.linkVisibility));
       line(x, y, lerp(x, s.x, 0.2), lerp(y, s.y, 0.2));
     }
+    noStroke();
 
     fill(colour);
-    noStroke();
     
     if(img != null)
       image(img, x, y, size, size);
