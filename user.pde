@@ -72,6 +72,7 @@ class Researcher extends User {
   final int STATE_PROMOTING = 3;
   
   int state = STATE_INIT;
+  int systemCount = 0;
   
   Item currentVideo;
   Item currentEmail;
@@ -101,8 +102,13 @@ class Researcher extends User {
   // Put out the study system
   void publishSystem() {
     if(project != null && server != null) {
+      systemCount++;
       browsing = project;
       System system = new System(x, y, null);
+      
+      system.version = systemCount;
+      system.colour = whiten(#FFB300, systemCount/3.0);
+      
       super.acceptItem(system);
       system.clone().sendTo(project);
       

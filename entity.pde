@@ -172,15 +172,18 @@ class Entity {
     if(label.length() == 0)
       return;
     
+    textFont(getEntityFont());
+    textAlign(CENTER);
+    text(label, x, y-(size*0.55));
+  }
+  
+  PFont getEntityFont() {
     PFont font = fonts.get(fontSize);
     if(font == null) {
       font = createFont("Arial", fontSize * SCALE);
       fonts.put(fontSize, font);
     }
-    
-    textFont(font);
-    textAlign(CENTER);
-    text(label, x, y-(size*0.55));
+    return font;
   }
   
   void postDraw() {}
@@ -210,6 +213,11 @@ class Entity {
     pastItems.add(i);
     i.hidden = true;
     layoutItems();
+  }
+  
+  void discardAllItems() {
+    while(items.size() > 0)
+      discardItem(items.get(0));
   }
   
   // Position the items within the entity so they do not overlap each other, by

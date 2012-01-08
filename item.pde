@@ -222,9 +222,13 @@ class Email extends Item {
 
 class System extends Item {
 
+  int version = 1;
+  
   System(int x, int y, Item master) {
     super(x, y, master);
-    colour = #00FF00;
+    version = 1;
+    fontSize = 7;
+    size = 20;
     
     appeal = 10;
     sharability = appeal * 5;
@@ -234,11 +238,25 @@ class System extends Item {
   }
 
   System clone() {
-    return (System) new System(x, y, null).getDetailsFrom(this);
+    System system = (System) new System(x, y, null).getDetailsFrom(this);
+    system.version = version;
+    return system;
   }
 
   void use() {
     new Data(x, y, null).sendTo(server);
+  }
+  
+  void postDraw() {
+    super.postDraw();
+    
+    if(hidden)
+      return;
+    
+    fill(0);
+    textFont(getEntityFont());
+    textAlign(CENTER);
+    text("v"+version, x, y+0.1*size);
   }
 }
 

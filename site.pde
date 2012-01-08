@@ -94,10 +94,8 @@ class YouTube extends Site {
   }
   
   boolean holdsItem(Item i, boolean includePast, boolean includePending) {
-    // we do not want non-video files so we pretend we already possess everything else
     if(!(i instanceof VideoFile))
       return true;
-    
     return super.holdsItem(i, includePast, includePending);
   }
   
@@ -114,15 +112,24 @@ class ProjectSite extends Site {
     colour = #0000FF;
     size = floor(55 * SCALE);
     isActive = true;
-    browsable = false;
+    browsable = true;
     label = "Project Site";
     fontSize = 12;
     linkVisibility = 0.05;
   }
   
   void acceptItem(Item i) {
+    if(!(i instanceof System))
+      return;
+    // we only want to host the latest system
+    discardAllItems();
     super.acceptItem(i);
-    println(items.size());
+  }
+  
+  boolean holdsItem(Item i, boolean includePast, boolean includePending) {
+    if(!(i instanceof System))
+      return true;   
+    return super.holdsItem(i, includePast, includePending);
   }
 
   // do not want to discard anything
