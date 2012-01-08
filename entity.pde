@@ -14,6 +14,8 @@ final int OCCASSIONAL_THINK_PERIOD_MIN = 1 * FPS;
 final int OCCASSIONAL_THINK_PERIOD_RANGE = 2 * FPS;
 final int REARRANGE_DURATION = floor(0.2 * FPS); // in millis
 
+final int STRENGTH_UPDATE_PERIOD = floor(0.5 * FPS);
+
 HashMap<Integer,PFont> fonts;
 
 static ArrayList<Entity> entities = new ArrayList<Entity>();
@@ -35,6 +37,7 @@ class Entity {
   float strength = 0;
   String label = "";
   int fontSize = 12;
+  int strengthUpdateOffset = 0;
   
   Entity(int x, int y) {
     items = new ArrayList<Item>();
@@ -43,6 +46,9 @@ class Entity {
     entities.add(this);
     this.x = x; 
     this.y = y;
+    
+    // disperse the think periods
+    strengthUpdateOffset = randInt(STRENGTH_UPDATE_PERIOD);
     
     if(fonts == null)
       fonts = new HashMap<Integer,PFont>();
@@ -90,8 +96,9 @@ class Entity {
     if(thinkDiff < 0) {
       thinkDiff = OCCASSIONAL_THINK_PERIOD_MIN + randInt(OCCASSIONAL_THINK_PERIOD_RANGE);
       occassionalThink();
-      updateStrength();
     }
+    if((frameCount + strengthUpdateOffset) % STRENGTH_UPDATE_PERIOD == 0)
+      updateStrength();
   }
   
   void occassionalThink() {}

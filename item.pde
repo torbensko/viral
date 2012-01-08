@@ -1,7 +1,6 @@
 import java.util.ArrayList;
 
 final int ITEM_LINK_LINE_WEIGHT = 1;
-final float ITEM_LINK_LINE_WHITENESS = 0.7;
 
 // time based:
 //final float TRANSFER_TIME_DEFAULT = 1000;
@@ -128,7 +127,7 @@ class Item extends Entity {
     // draw the links to the other sites
     strokeWeight(max(1, ITEM_LINK_LINE_WEIGHT * SCALE));
     for (Site s : links) {
-      stroke(whiten(s.colour, ITEM_LINK_LINE_WHITENESS));
+      stroke(s.colour, s.linkVisibility*255); //whiten(s.colour, s.linkVisibility));
       // we draw the second half in the third pass
       line(lerp(x, s.x, 0.2), lerp(y, s.y, 0.2), s.x, s.y);
     }
@@ -144,7 +143,7 @@ class Item extends Entity {
     // we draw the second half now so it overlaps the site this item may be sitting on
     strokeWeight(max(1, ITEM_LINK_LINE_WEIGHT * SCALE));
     for (Site s : links) {
-      stroke(whiten(s.colour, ITEM_LINK_LINE_WHITENESS));
+      stroke(s.colour, s.linkVisibility*255); //whiten(s.colour, s.linkVisibility));
       line(x, y, lerp(x, s.x, 0.2), lerp(y, s.y, 0.2));
     }
 
@@ -213,6 +212,7 @@ class Email extends Item {
     links.add(project);
     appeal = 2;
     sharability = 10;
+    size = 30;
   }
 
   Email clone() {

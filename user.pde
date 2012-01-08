@@ -6,7 +6,7 @@ static Researcher researcher;
 
 final int BROWSE_SIZE = 200;
 final int BROWSE_INCREASE = 10;
-final int BROSWE_LINE_WEIGHT = 1;
+final int BROSWE_LINE_WEIGHT = 2;
 
 final int FOLLOWING_CHANCE = 5;
 

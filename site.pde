@@ -15,6 +15,7 @@ class Site extends Entity {
 
   int followChance = 0;
   ArrayList<User> followers;
+  float linkVisibility = 0.3;
   
   boolean browsable = true;
   
@@ -73,6 +74,7 @@ class YouTube extends Site {
     followChance = 2;
     label = "YouTube";
     fontSize = 16;
+    linkVisibility = 0.1;
   }
   
   void acceptItem(Item i) {
@@ -115,6 +117,7 @@ class ProjectSite extends Site {
     browsable = false;
     label = "Project Site";
     fontSize = 12;
+    linkVisibility = 0.05;
   }
   
   void acceptItem(Item i) {
