@@ -11,6 +11,7 @@ static YouTube youtube;
 static ProjectSite project;
 static Server server;
 
+String[] siteNames = {"Reddit", "Facebook", "Twitter"}; 
 
 class Site extends Entity {
 
@@ -27,6 +28,9 @@ class Site extends Entity {
     colour = #AAFFBB;
     followers = new ArrayList<User>();
     appeal = 5;
+    
+    if(sites.size() < siteNames.length)
+      label = siteNames[sites.size() - 1];
   }
   
   void acceptItem(Item i) {
