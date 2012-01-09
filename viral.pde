@@ -1,8 +1,8 @@
 //import processing.video.*;
 
-final int SEPERATION_NORM = 140;
-final int SEPERATION_USER = 50;
-final int SITE_USER_RATIO = 5; // i.e. SITE_USER_RATIO users to every site
+final int SEPERATION_NORM = 100;
+final int SEPERATION_USER = 40;
+final int SITE_USER_RATIO = 15; // i.e. SITE_USER_RATIO users to every site
 
 final char KEY_RECORDING_START = 'r';
 final char KEY_RECORDING_FINISH = ' ';
@@ -14,14 +14,15 @@ final char KEY_POST_TO_FORUM = 'f';
 final char KEY_ALL_ACTIVE = 'a';
 
 final int FPS = 25;
-final float SCALE = 1.2;
+final float SCALE = 0.4;
 
 //MovieMaker record; // allows us to record the sequence
 boolean recording = false;
 String recordPrefix = "";
 
 void setup() {
-  size(800, 800);
+  int w = screen.width;
+  size(w, floor((9 * w)/16));
   smooth();
   
   Calendar now = Calendar.getInstance();
@@ -96,7 +97,10 @@ void setupKeyPlayers() {
   makeYouTube(sites.get(0));
   makeServer(sites.get(0));
   makeProjectSite(sites.get(0));
-  
+  systemReady();
+}
+
+void systemReady() {
   // we need the users to consider which are good websites to check
   for(User u : (ArrayList<User>) users.clone())
     u.resetBrowsing();
@@ -145,8 +149,10 @@ void makeAllActive() {
 void mouseClicked() {
   for(User u : users) {
     if(u.containsClick()) {
-      if(researcher == null)
+      if(researcher == null) {
         makeResearcher(u);
+        systemReady();
+      }
       break; // do not use our iterator further
     }
   }
@@ -156,8 +162,10 @@ void mouseClicked() {
         makeYouTube(s);
       else if(project == null)
         makeProjectSite(s);
-      else if(server == null)
+      else if(server == null) {
         makeServer(s);
+        systemReady();
+      }
       break; // do not use our iterator further
     }
   }

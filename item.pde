@@ -191,7 +191,8 @@ class YouTubeVid extends Item {
     super(x, y, master);
     colour = #BB0000;
     links.add(youtube);
-    appeal = 5;
+    appeal = 4;
+    sharability = 2;
   }
 
   YouTubeVid clone() {
@@ -205,12 +206,12 @@ class Email extends Item {
 
   Email(int x, int y, Item master) {
     super(x, y, master);
-    colour = #5AD4D6;
+    colour = #9900FF;
     if(emailIcon == null)
       emailIcon = generateImage(colour, loadImage("mail.png"));
     img = emailIcon;
     links.add(project);
-    appeal = 2;
+    appeal = 4;
     sharability = 10;
     size = 30;
   }
@@ -228,10 +229,10 @@ class System extends Item {
     super(x, y, master);
     version = 1;
     fontSize = 7;
-    size = 20;
+    size = floor(20 * SCALE);
     
-    appeal = 10;
-    sharability = appeal * 5;
+    appeal = 4;
+    sharability = 20;
     
     if(server != null)
       links.add(server);

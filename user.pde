@@ -34,7 +34,7 @@ class User extends Entity {
   
   void preDraw() {
     if(browsing != null) {
-      stroke(activeColour);
+      stroke(activeColour, floor(browsing.linkVisibility*255));
       strokeWeight(max(1, BROSWE_LINE_WEIGHT * SCALE));
       line(x, y, browsing.x, browsing.y);
     }
@@ -107,12 +107,12 @@ class Researcher extends User {
   // Put out the study system
   void publishSystem() {
     if(project != null && server != null) {
-      systemCount++;
       browsing = project;
       System system = new System(x, y, null);
       
+      systemCount++;
       system.version = systemCount;
-      system.colour = whiten(#FFB300, systemCount/3.0);
+      system.colour = whiten(#FFB300, (systemCount - 1)/3.0);
       
       super.acceptItem(system);
       system.clone().sendTo(project);

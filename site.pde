@@ -6,6 +6,8 @@ final int FOLLOWABLE_STROKE_WEIGHT = 3;
 final color FOLLOWABLE_COLOR = #FFAA11;
 final int FOLLOWABLE_VISIBILITY = 50;
 
+final int DEVELOPER_SIZE = 150;
+
 static ArrayList<Site> sites = new ArrayList<Site>();
 static YouTube youtube;
 static ProjectSite project;
@@ -17,7 +19,7 @@ class Site extends Entity {
 
   int followChance = 0;
   ArrayList<User> followers;
-  float linkVisibility = 0.3;
+  float linkVisibility = 0.05;
   
   boolean browsable = true;
   
@@ -25,9 +27,9 @@ class Site extends Entity {
     super(x, y);
     sites.add(this);
     size = floor(50 * SCALE);
-    colour = #AAFFBB;
+    colour = #88DDAA;
     followers = new ArrayList<User>();
-    appeal = 5;
+    appeal = 20;
     
     if(sites.size() < siteNames.length)
       label = siteNames[sites.size() - 1];
@@ -82,7 +84,8 @@ class YouTube extends Site {
     followChance = 2;
     label = "YouTube";
     fontSize = 16;
-    linkVisibility = 0.1;
+    //linkVisibility = 0.1;
+    linkVisibility = 0.01;
   }
   
   void acceptItem(Item i) {
@@ -117,15 +120,24 @@ class ProjectSite extends Site {
   ProjectSite(int x, int y) {
     super(x, y);
     project = this;
-    colour = #0000FF;
     size = floor(55 * SCALE);
     isActive = true;
-    browsable = true;
-    label = "Project Site";
     fontSize = 12;
-    linkVisibility = 0.05;
-    followChance = 5;
+    linkVisibility = 0.01;
     appeal = 1;
+    browsable = false;
+    
+    // project site
+    label = "Project Site";
+    colour = #0000FF;
+    
+    // development site
+//    label = "Developer Site";
+//    colour = #666666;
+//    followChance = 5;
+//    for(User u : (ArrayList<User>) users.clone())
+//      if(u.distance(this) < DEVELOPER_SIZE*SCALE)
+//        followers.add(u);
   }
   
   void acceptItem(Item i) {
@@ -160,6 +172,7 @@ class Server extends Site {
     privatelyActive = true;
     label = "Data Server";
     fontSize = 8;
+    linkVisibility = 0.05;
   }
   
   void acceptItem(Item i) {
